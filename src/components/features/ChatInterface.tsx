@@ -1,12 +1,16 @@
 
 import React, { useState } from 'react';
-import { Send } from 'lucide-react';
-import PenguinMascot from '../mascot/PenguinMascot';
+import { Send, Smile, Paperclip } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Avatar } from '@/components/ui/avatar';
+import { Card } from '@/components/ui/card';
 
 const ChatInterface = () => {
   const [messages, setMessages] = useState<{ text: string; sender: 'user' | 'ai'; timestamp: Date }[]>([
     { 
-      text: "Hi there! I'm Wysa, your mental wellness companion. How are you feeling today?", 
+      text: "Hi there! I'm HeadDoWell, your mental wellness companion. How are you feeling today?", 
       sender: 'ai', 
       timestamp: new Date() 
     }
@@ -43,59 +47,90 @@ const ChatInterface = () => {
   };
 
   return (
-    <div className="h-[calc(100vh-160px)] flex flex-col bg-white dark:bg-card rounded-lg overflow-hidden border border-gray-100 dark:border-gray-800">
-      <div className="bg-teal p-4 text-white flex items-center">
-        <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center mr-3">
-          <span className="text-sm">W</span>
+    <Card className="h-[calc(100vh-160px)] flex flex-col bg-white dark:bg-card rounded-lg shadow-sm">
+      {/* Header */}
+      <div className="bg-teal p-4 flex items-center rounded-t-lg">
+        <div className="w-10 h-10 rounded-full overflow-hidden mr-3">
+          <img 
+            src="/lovable-uploads/d7c3a4b7-2864-4a8f-84a7-024a028614d0.png" 
+            alt="HeadDoWell Avatar" 
+            className="w-full h-full object-contain"
+          />
         </div>
-        <div className="flex-1">
-          <h2 className="font-medium">Chat with Wysa</h2>
-          <p className="text-xs text-white/80">Your AI wellness penguin</p>
+        <div>
+          <h2 className="font-medium text-white">Chat with HeadDoWell</h2>
+          <p className="text-xs text-white/80">Online</p>
         </div>
       </div>
 
       {/* Chat messages */}
-      <div className="flex-1 overflow-y-auto p-4">
-        {messages.map((message, index) => (
-          <div key={index} className={message.sender === 'user' ? 'chat-bubble-user' : 'chat-bubble-ai'}>
-            {message.sender === 'ai' && (
-              <div className="flex-shrink-0 w-8 h-8">
-                <PenguinMascot size="sm" animation="none" />
+      <ScrollArea className="flex-1 p-4">
+        <div className="space-y-4">
+          {messages.map((message, index) => (
+            <div
+              key={index}
+              className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'} gap-3`}
+            >
+              {message.sender === 'ai' && (
+                <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
+                  <img 
+                    src="/lovable-uploads/d7c3a4b7-2864-4a8f-84a7-024a028614d0.png" 
+                    alt="HeadDoWell Avatar" 
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+              )}
+              <div
+                className={`max-w-[70%] rounded-2xl p-3 ${
+                  message.sender === 'user'
+                    ? 'bg-teal text-white'
+                    : 'bg-gray-100 dark:bg-gray-800'
+                }`}
+              >
+                <p className="text-sm">{message.text}</p>
+                <span className="text-xs opacity-70 mt-1 block">
+                  {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                </span>
               </div>
-            )}
-            <div>
-              <p className="text-gray-800 dark:text-gray-200">{message.text}</p>
-              <span className="text-xs text-gray-500 block mt-1">
-                {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-              </span>
+              {message.sender === 'user' && (
+                <Avatar className="w-8 h-8 bg-orange-500">
+                  <span className="text-sm text-white">You</span>
+                </Avatar>
+              )}
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      </ScrollArea>
 
       {/* Input area */}
-      <div className="border-t border-gray-200 dark:border-gray-700 p-3 bg-white dark:bg-card">
-        <div className="flex items-center bg-gray-100 dark:bg-gray-800 rounded-full px-4 py-2">
-          <input
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-            placeholder="Type your message..."
-            className="flex-1 bg-transparent outline-none text-gray-800 dark:text-gray-200"
-          />
-          <button
-            onClick={handleSend}
-            disabled={!input.trim()}
-            className={`ml-2 rounded-full w-8 h-8 flex items-center justify-center transition-colors ${
-              input.trim() ? 'bg-teal text-white' : 'bg-gray-300 dark:bg-gray-700 text-gray-500'
-            }`}
-          >
-            <Send className="w-4 h-4" />
-          </button>
+      <div className="border-t border-gray-200 dark:border-gray-700 p-4">
+        <div className="flex items-center gap-2">
+          <Button variant="ghost" size="icon" className="text-gray-500">
+            <Paperclip className="h-5 w-5" />
+          </Button>
+          <Button variant="ghost" size="icon" className="text-gray-500">
+            <Smile className="h-5 w-5" />
+          </Button>
+          <div className="flex-1 flex items-center gap-2">
+            <Input
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && handleSend()}
+              placeholder="Type your message..."
+              className="flex-1"
+            />
+            <Button
+              onClick={handleSend}
+              disabled={!input.trim()}
+              size="icon"
+              className="bg-teal hover:bg-teal/90"
+            >
+              <Send className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
       </div>
-    </div>
+    </Card>
   );
 };
 
