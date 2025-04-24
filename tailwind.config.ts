@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,6 +62,26 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				// HeadDoWell custom colors
+				teal: {
+					light: '#B2E8E0',
+					DEFAULT: '#45B7A8',
+					dark: '#2C8C80'
+				},
+				blue: {
+					lightest: '#E5F8FF',
+					light: '#D3E4FD',
+					DEFAULT: '#60A5FA'
+				},
+				neutral: {
+					light: '#F9FAFB',
+					DEFAULT: '#9CA3AF',
+					dark: '#4B5563'
+				},
+				emergency: {
+					DEFAULT: '#EF4444',
+					light: '#FEE2E2'
 				}
 			},
 			borderRadius: {
@@ -84,11 +105,38 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'float': {
+					'0%, 100%': {
+						transform: 'translateY(0)',
+					},
+					'50%': {
+						transform: 'translateY(-10px)',
+					}
+				},
+				'breathe': {
+					'0%, 100%': {
+						transform: 'scale(1)',
+					},
+					'50%': {
+						transform: 'scale(1.05)',
+					}
+				},
+				'pulse-slow': {
+					'0%, 100%': {
+						opacity: '1',
+					},
+					'50%': {
+						opacity: '0.8',
+					}
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'float': 'float 3s ease-in-out infinite',
+				'breathe': 'breathe 4s ease-in-out infinite',
+				'pulse-slow': 'pulse-slow 3s ease-in-out infinite'
 			}
 		}
 	},
