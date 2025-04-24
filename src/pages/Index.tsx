@@ -7,7 +7,7 @@ import MoodTracker from '../components/features/MoodTracker';
 import ChatInterface from '../components/features/ChatInterface';
 import CrisisSupport from '../components/features/CrisisSupport';
 import SelfCareActivities from '../components/features/SelfCareActivities';
-import { MessageSquare, BarChart2, SosIcon, Heart } from 'lucide-react';
+import { MessageSquare, BarChart2, AlertCircle, Heart } from 'lucide-react';
 
 const Index = () => {
   const [activeFeature, setActiveFeature] = React.useState<string | null>(null);
@@ -80,7 +80,7 @@ const Index = () => {
             <FeatureCard
               title="Crisis Support"
               description="Get immediate help when you need it most"
-              icon={<div className="flex justify-center"><SosIcon className="w-6 h-6 text-emergency" /></div>}
+              icon={<div className="flex justify-center"><AlertCircle className="w-6 h-6 text-emergency" /></div>}
               onClick={() => setActiveFeature('crisis')}
             />
             
