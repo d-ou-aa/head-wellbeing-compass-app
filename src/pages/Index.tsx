@@ -1,7 +1,5 @@
-
 import React from 'react';
 import MainLayout from '../components/layouts/MainLayout';
-import PenguinMascot from '../components/mascot/PenguinMascot';
 import FeatureCard from '../components/ui/FeatureCard';
 import MoodTracker from '../components/features/MoodTracker';
 import ChatInterface from '../components/features/ChatInterface';
@@ -46,7 +44,7 @@ const Index = () => {
             <div className="mx-auto mb-4 w-32 h-32 flex items-center justify-center">
               <img 
                 src="/lovable-uploads/d7c3a4b7-2864-4a8f-84a7-024a028614d0.png" 
-                alt="Wysa Avatar" 
+                alt="HeadDoWell Avatar" 
                 className="w-full h-full object-contain"
               />
             </div>
