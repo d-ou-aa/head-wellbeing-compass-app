@@ -43,7 +43,13 @@ const Index = () => {
       ) : (
         <>
           <div className="text-center mb-10">
-            <PenguinMascot size="lg" animation="float" className="mx-auto mb-4" />
+            <div className="mx-auto mb-4 w-32 h-32 flex items-center justify-center">
+              <img 
+                src="/lovable-uploads/d7c3a4b7-2864-4a8f-84a7-024a028614d0.png" 
+                alt="Wysa Avatar" 
+                className="w-full h-full object-contain"
+              />
+            </div>
             <h1 className="text-3xl font-bold text-neutral-dark mb-2">Welcome to HeadDoWell</h1>
             <p className="text-gray-600 dark:text-gray-400 max-w-sm mx-auto">
               Your personal mental wellness companion. How can we help you today?
