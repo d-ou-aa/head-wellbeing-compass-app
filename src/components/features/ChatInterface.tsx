@@ -1,28 +1,54 @@
 
-import React, { useState } from 'react';
-import { Send, Smile, Paperclip } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Send, Smile, Paperclip, History } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar } from '@/components/ui/avatar';
 import { Card } from '@/components/ui/card';
 
+type Message = {
+  text: string;
+  sender: 'user' | 'ai';
+  timestamp: Date;
+};
+
 const ChatInterface = () => {
-  const [messages, setMessages] = useState<{ text: string; sender: 'user' | 'ai'; timestamp: Date }[]>([
-    { 
-      text: "Hi there! I'm HeadDoWell, your mental wellness companion. How are you feeling today?", 
-      sender: 'ai', 
-      timestamp: new Date() 
-    }
-  ]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
+  
+  // Load chat history from localStorage when component mounts
+  useEffect(() => {
+    const savedMessages = localStorage.getItem('chatHistory');
+    if (savedMessages) {
+      const parsedMessages = JSON.parse(savedMessages).map((msg: any) => ({
+        ...msg,
+        timestamp: new Date(msg.timestamp)
+      }));
+      setMessages(parsedMessages);
+    } else {
+      // Set initial message only if there's no history
+      setMessages([
+        { 
+          text: "Hi there! I'm HeadDoWell, your mental wellness companion. How are you feeling today?",
+          sender: 'ai',
+          timestamp: new Date()
+        }
+      ]);
+    }
+  }, []);
+
+  // Save messages to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('chatHistory', JSON.stringify(messages));
+  }, [messages]);
 
   const handleSend = () => {
     if (!input.trim()) return;
 
     // Add user message
     const userMessage = { text: input, sender: 'user' as const, timestamp: new Date() };
-    setMessages([...messages, userMessage]);
+    setMessages(prev => [...prev, userMessage]);
     setInput('');
 
     // Simulate AI response after a short delay
@@ -46,21 +72,42 @@ const ChatInterface = () => {
     }, 1000);
   };
 
+  const clearHistory = () => {
+    const initialMessage = {
+      text: "Hi there! I'm HeadDoWell, your mental wellness companion. How are you feeling today?",
+      sender: 'ai' as const,
+      timestamp: new Date()
+    };
+    setMessages([initialMessage]);
+    localStorage.setItem('chatHistory', JSON.stringify([initialMessage]));
+  };
+
   return (
     <Card className="h-[calc(100vh-160px)] flex flex-col bg-white dark:bg-card rounded-lg shadow-sm">
-      {/* Header */}
-      <div className="bg-teal p-4 flex items-center rounded-t-lg">
-        <div className="w-10 h-10 rounded-full overflow-hidden mr-3">
-          <img 
-            src="/lovable-uploads/d7c3a4b7-2864-4a8f-84a7-024a028614d0.png" 
-            alt="HeadDoWell Avatar" 
-            className="w-full h-full object-contain"
-          />
+      {/* Header with clear history button */}
+      <div className="bg-teal p-4 flex items-center justify-between rounded-t-lg">
+        <div className="flex items-center">
+          <div className="w-10 h-10 rounded-full overflow-hidden mr-3">
+            <img 
+              src="/lovable-uploads/d7c3a4b7-2864-4a8f-84a7-024a028614d0.png" 
+              alt="HeadDoWell Avatar" 
+              className="w-full h-full object-contain"
+            />
+          </div>
+          <div>
+            <h2 className="font-medium text-white">Chat with HeadDoWell</h2>
+            <p className="text-xs text-white/80">Online</p>
+          </div>
         </div>
-        <div>
-          <h2 className="font-medium text-white">Chat with HeadDoWell</h2>
-          <p className="text-xs text-white/80">Online</p>
-        </div>
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          onClick={clearHistory}
+          className="text-white hover:text-white/80"
+          title="Clear chat history"
+        >
+          <History className="h-5 w-5" />
+        </Button>
       </div>
 
       {/* Chat messages */}
