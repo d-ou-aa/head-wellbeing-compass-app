@@ -10,6 +10,9 @@ import Journal from "./pages/Journal";
 import Resources from "./pages/Resources";
 import NotFound from "./pages/NotFound";
 import Onboarding from "./pages/Onboarding";
+import Profile from "./pages/Profile";
+import Crisis from "./pages/Crisis";
+import Settings from "./pages/Settings";
 
 const queryClient = new QueryClient();
 
@@ -25,9 +28,9 @@ const App = () => (
           <Route path="/chat" element={<Chat />} />
           <Route path="/journal" element={<Journal />} />
           <Route path="/resources" element={<Resources />} />
-          <Route path="/crisis" element={<Index />} />
-          <Route path="/profile" element={<Index />} />
-          <Route path="/settings" element={<Index />} />
+          <Route path="/crisis" element={<Crisis />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/settings" element={<Settings />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
