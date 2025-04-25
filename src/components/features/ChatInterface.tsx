@@ -1,11 +1,11 @@
-
 import React, { useState, useEffect } from 'react';
-import { Send, Smile, Paperclip, History } from 'lucide-react';
+import { Send, Smile, Paperclip } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar } from '@/components/ui/avatar';
 import { Card } from '@/components/ui/card';
+import ChatHistory from './ChatHistory';
 
 type Message = {
   text: string;
@@ -84,30 +84,15 @@ const ChatInterface = () => {
 
   return (
     <Card className="h-[calc(100vh-160px)] flex flex-col bg-white dark:bg-card rounded-lg shadow-sm">
-      {/* Header with clear history button */}
+      {/* Header with chat history */}
       <div className="bg-teal p-4 flex items-center justify-between rounded-t-lg">
         <div className="flex items-center">
-          <div className="w-10 h-10 rounded-full overflow-hidden mr-3">
-            <img 
-              src="/lovable-uploads/d7c3a4b7-2864-4a8f-84a7-024a028614d0.png" 
-              alt="HeadDoWell Avatar" 
-              className="w-full h-full object-contain"
-            />
-          </div>
-          <div>
+          <ChatHistory messages={messages} />
+          <div className="ml-3">
             <h2 className="font-medium text-white">Chat with HeadDoWell</h2>
             <p className="text-xs text-white/80">Online</p>
           </div>
         </div>
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          onClick={clearHistory}
-          className="text-white hover:text-white/80"
-          title="Clear chat history"
-        >
-          <History className="h-5 w-5" />
-        </Button>
       </div>
 
       {/* Chat messages */}
