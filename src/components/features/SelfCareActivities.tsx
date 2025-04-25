@@ -1,9 +1,8 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Heart, Leaf, Meditation } from 'lucide-react';
+import { Heart, Leaf, Brain } from 'lucide-react';
 
 const SelfCareActivities = () => {
   const [activeExercise, setActiveExercise] = useState<null | 'breathing' | 'gratitude' | 'grounding'>(null);
@@ -214,7 +213,7 @@ const SelfCareActivities = () => {
         id: 'breathing',
         title: 'Breathing Exercise',
         description: '4-7-8 breathing technique for stress relief',
-        icon: <Meditation className="w-5 h-5 text-teal" />
+        icon: <Brain className="w-5 h-5 text-teal" />
       },
       {
         id: 'gratitude',
