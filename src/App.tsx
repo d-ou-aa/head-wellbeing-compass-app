@@ -5,6 +5,9 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
+import Chat from "./pages/Chat";
+import Journal from "./pages/Journal";
+import Resources from "./pages/Resources";
 import NotFound from "./pages/NotFound";
 import Onboarding from "./pages/Onboarding";
 
@@ -19,14 +22,12 @@ const App = () => (
         <Routes>
           <Route path="/onboarding" element={<Onboarding />} />
           <Route path="/" element={<Index />} />
-          {/* These routes will be implemented in future iterations */}
-          <Route path="/chat" element={<Index />} />
-          <Route path="/journal" element={<Index />} />
-          <Route path="/resources" element={<Index />} />
+          <Route path="/chat" element={<Chat />} />
+          <Route path="/journal" element={<Journal />} />
+          <Route path="/resources" element={<Resources />} />
           <Route path="/crisis" element={<Index />} />
           <Route path="/profile" element={<Index />} />
           <Route path="/settings" element={<Index />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
