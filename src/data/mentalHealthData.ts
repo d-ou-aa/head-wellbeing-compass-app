@@ -15,6 +15,9 @@ export const Depression: Disorder = {
       "You're not lazy; your mind and body are trying to cope.",
       "Many people with depression feel tired most of the time.",
       "Recognizing fatigue is the first step toward recovery."
+    ],
+    symptoms: [
+      "tiredness", "exhaustion", "lack of energy", "feeling drained"
     ]
   },
   Sadness: {
@@ -30,6 +33,9 @@ export const Depression: Disorder = {
       "It's okay to feel down, and you're not alone.",
       "Acknowledging sadness is brave and important.",
       "Sadness isn't weakness—it's a signal you deserve care."
+    ],
+    symptoms: [
+      "feeling sad", "feeling blue", "emotional pain", "hopelessness"
     ]
   }
 };
@@ -48,6 +54,9 @@ export const Anxiety: Disorder = {
       "You're not alone—many people feel the same way.",
       "Being restless doesn't mean something is wrong with you.",
       "It's okay to need calm—it's a strength to seek peace."
+    ],
+    symptoms: [
+      "feeling anxious", "nervous energy", "can't relax", "feeling jittery"
     ]
   },
   Sweating: {
@@ -63,6 +72,14 @@ export const Anxiety: Disorder = {
       "Your body is reacting to perceived danger—this is normal.",
       "You're not alone in experiencing this.",
       "Understanding these symptoms helps reduce fear of them."
+    ],
+    symptoms: [
+      "sweaty palms", "excessive sweating", "feeling clammy", "nervous perspiration"
     ]
   }
+};
+
+export const mentalHealthData = {
+  Depression,
+  Anxiety
 };
