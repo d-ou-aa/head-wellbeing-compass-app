@@ -6,6 +6,8 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar } from '@/components/ui/avatar';
 import { Card } from '@/components/ui/card';
 import ChatHistory from './ChatHistory';
+import { detectSymptoms, getQuestionsForSymptom, getAffirmationsForSymptom } from '@/services/mentalHealthService';
+import { DetectedSymptom } from '@/types/mentalHealth';
 
 type Message = {
   text: string;
@@ -16,8 +18,10 @@ type Message = {
 const ChatInterface = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
+  const [currentSymptom, setCurrentSymptom] = useState<DetectedSymptom | null>(null);
+  const [questionIndex, setQuestionIndex] = useState(0);
+  const [yesCount, setYesCount] = useState(0);
   
-  // Load chat history from localStorage when component mounts
   useEffect(() => {
     const savedMessages = localStorage.getItem('chatHistory');
     if (savedMessages) {
@@ -27,7 +31,6 @@ const ChatInterface = () => {
       }));
       setMessages(parsedMessages);
     } else {
-      // Set initial message only if there's no history
       setMessages([
         { 
           text: "Hi there! I'm HeadDoWell, your mental wellness companion. How are you feeling today?",
@@ -38,7 +41,6 @@ const ChatInterface = () => {
     }
   }, []);
 
-  // Save messages to localStorage whenever they change
   useEffect(() => {
     localStorage.setItem('chatHistory', JSON.stringify(messages));
   }, [messages]);
@@ -46,30 +48,63 @@ const ChatInterface = () => {
   const handleSend = () => {
     if (!input.trim()) return;
 
-    // Add user message
     const userMessage = { text: input, sender: 'user' as const, timestamp: new Date() };
     setMessages(prev => [...prev, userMessage]);
-    setInput('');
-
-    // Simulate AI response after a short delay
-    setTimeout(() => {
-      let response: string;
-
-      if (input.toLowerCase().includes('anxiety') || input.toLowerCase().includes('anxious')) {
-        response = "It sounds like you might be experiencing some anxiety. That's completely valid. Would you like to try a quick breathing exercise to help calm your mind?";
-      } else if (input.toLowerCase().includes('sad') || input.toLowerCase().includes('depressed')) {
-        response = "I'm sorry to hear you're feeling down. Would you like to talk more about what's been going on, or perhaps try an activity that might help lift your spirits?";
-      } else if (input.toLowerCase().includes('stress') || input.toLowerCase().includes('stressed')) {
-        response = "Dealing with stress can be challenging. Would you like to explore some stress management techniques that have helped others?";
-      } else if (input.toLowerCase().includes('hello') || input.toLowerCase().includes('hi')) {
-        response = "Hello! It's great to chat with you today. How are you feeling?";
-      } else {
-        response = "Thank you for sharing that with me. Would you like to explore this further or try a mindfulness activity?";
-      }
-
-      const aiMessage = { text: response, sender: 'ai' as const, timestamp: new Date() };
+    
+    const detectedSymptoms = detectSymptoms(input);
+    
+    if (detectedSymptoms.length > 0) {
+      setCurrentSymptom(detectedSymptoms[0]);
+      setQuestionIndex(0);
+      setYesCount(0);
+      
+      const questions = getQuestionsForSymptom(detectedSymptoms[0].disorder, detectedSymptoms[0].name);
+      const aiMessage = {
+        text: questions[0],
+        sender: 'ai' as const,
+        timestamp: new Date()
+      };
       setMessages(prev => [...prev, aiMessage]);
-    }, 1000);
+    } else {
+      const aiMessage = {
+        text: "I'm here to listen. Could you tell me more about how you're feeling?",
+        sender: 'ai' as const,
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, aiMessage]);
+    }
+    
+    setInput('');
+  };
+
+  const handleUserResponse = (input: string) => {
+    if (!currentSymptom) return;
+
+    const isYes = input.toLowerCase().includes('yes');
+    if (isYes) setYesCount(prev => prev + 1);
+
+    const questions = getQuestionsForSymptom(currentSymptom.disorder, currentSymptom.name);
+    
+    if (yesCount >= 3 || questionIndex === questions.length - 1) {
+      const affirmations = getAffirmationsForSymptom(currentSymptom.disorder, currentSymptom.name);
+      const affirmationMessage = {
+        text: affirmations.join('\n'),
+        sender: 'ai' as const,
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, affirmationMessage]);
+      setCurrentSymptom(null);
+      setQuestionIndex(0);
+      setYesCount(0);
+    } else {
+      setQuestionIndex(prev => prev + 1);
+      const nextQuestion = {
+        text: questions[questionIndex + 1],
+        sender: 'ai' as const,
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, nextQuestion]);
+    }
   };
 
   const clearHistory = () => {
@@ -84,7 +119,6 @@ const ChatInterface = () => {
 
   return (
     <Card className="h-[calc(100vh-160px)] flex flex-col bg-white dark:bg-card rounded-lg shadow-sm">
-      {/* Header with chat history */}
       <div className="bg-teal p-4 flex items-center justify-between rounded-t-lg">
         <div className="flex items-center">
           <ChatHistory messages={messages} />
@@ -95,7 +129,6 @@ const ChatInterface = () => {
         </div>
       </div>
 
-      {/* Chat messages */}
       <ScrollArea className="flex-1 p-4">
         <div className="space-y-4">
           {messages.map((message, index) => (
@@ -134,7 +167,6 @@ const ChatInterface = () => {
         </div>
       </ScrollArea>
 
-      {/* Input area */}
       <div className="border-t border-gray-200 dark:border-gray-700 p-4">
         <div className="flex items-center gap-2">
           <Button variant="ghost" size="icon" className="text-gray-500">
