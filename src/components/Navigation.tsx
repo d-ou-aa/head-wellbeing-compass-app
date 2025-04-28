@@ -10,6 +10,7 @@ const Navigation = () => {
   const navItems = [
     { name: 'Home', path: '/', icon: Home },
     { name: 'Chat', path: '/chat', icon: MessageSquare },
+    { name: 'Chat History', path: '/chat-history', icon: MessageSquare },
     { name: 'Journal', path: '/journal', icon: BarChart2 },
     { name: 'Resources', path: '/resources', icon: BookOpen },
   ];
