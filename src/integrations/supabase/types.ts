@@ -9,13 +9,36 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      anonymous_users: {
+        Row: {
+          created_at: string | null
+          id: string
+          last_active: string | null
+          nickname: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          last_active?: string | null
+          nickname: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          last_active?: string | null
+          nickname?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      check_nickname_exists: {
+        Args: { nickname: string }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never
