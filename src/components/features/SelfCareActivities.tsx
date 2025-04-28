@@ -3,6 +3,8 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Heart, Leaf, Brain } from 'lucide-react';
+import { saveGratitudeEntry } from '@/services/gratitudeService';
+import { useToast } from '@/hooks/use-toast';
 
 const SelfCareActivities = () => {
   const [activeExercise, setActiveExercise] = useState<null | 'breathing' | 'gratitude' | 'grounding'>(null);
@@ -16,7 +18,8 @@ const SelfCareActivities = () => {
     smell: ['', ''],
     taste: ['']
   });
-  
+  const { toast } = useToast();
+
   useEffect(() => {
     if (activeExercise === 'breathing') {
       const timer = setTimeout(() => {
@@ -42,13 +45,32 @@ const SelfCareActivities = () => {
     });
   };
 
+  const handleGratitudeComplete = () => {
+    if (gratitudeEntries.some(entry => !entry.trim())) {
+      toast({
+        title: "Please fill all entries",
+        description: "Share three things you're grateful for before completing.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    saveGratitudeEntry(gratitudeEntries);
+    toast({
+      title: "Gratitude practice completed!",
+      description: "Your grateful moments have been saved.",
+    });
+    setActiveExercise(null);
+    setGratitudeEntries(['', '', '']);
+  };
+
   const handleGroundingChange = (sense: keyof typeof groundingSenses, index: number, value: string) => {
     setGroundingSenses(prev => ({
       ...prev,
       [sense]: prev[sense].map((item, i) => i === index ? value : item)
     }));
   };
-  
+
   const renderBreathingExercise = () => (
     <div className="flex flex-col items-center py-8">
       <div className="breathing-circle mb-4">
@@ -106,7 +128,7 @@ const SelfCareActivities = () => {
       </div>
 
       <Button 
-        onClick={() => setActiveExercise(null)}
+        onClick={handleGratitudeComplete}
         variant="outline"
         className="w-full mt-6"
       >
@@ -206,7 +228,7 @@ const SelfCareActivities = () => {
       </Button>
     </div>
   );
-  
+
   const renderExercisesList = () => {
     const exercises = [
       {
@@ -250,7 +272,7 @@ const SelfCareActivities = () => {
       </>
     );
   };
-  
+
   return (
     <div className="bg-white dark:bg-card rounded-lg p-5 shadow-sm border border-gray-100 dark:border-gray-800">
       {activeExercise === 'breathing' ? renderBreathingExercise() :

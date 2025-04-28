@@ -13,7 +13,6 @@ import Onboarding from "./pages/Onboarding";
 import Profile from "./pages/Profile";
 import Crisis from "./pages/Crisis";
 import Settings from "./pages/Settings";
-import ChatHistory from "./pages/ChatHistory";
 
 const queryClient = new QueryClient();
 
@@ -27,7 +26,6 @@ const App = () => (
           <Route path="/onboarding" element={<Onboarding />} />
           <Route path="/" element={<Index />} />
           <Route path="/chat" element={<Chat />} />
-          <Route path="/chat-history" element={<ChatHistory />} />
           <Route path="/journal" element={<Journal />} />
           <Route path="/resources" element={<Resources />} />
           <Route path="/crisis" element={<Crisis />} />

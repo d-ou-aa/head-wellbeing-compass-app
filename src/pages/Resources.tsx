@@ -3,31 +3,46 @@ import React from 'react';
 import MainLayout from '../components/layouts/MainLayout';
 import { Card } from '@/components/ui/card';
 import { BookOpen, FileText, MessageSquare } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const Resources = () => {
+  const navigate = useNavigate();
+  
   const resources = [
     {
       id: 1,
       title: 'Mindfulness Guide',
       description: 'Learn the basics of mindfulness meditation',
       icon: BookOpen,
-      category: 'Guide'
+      category: 'Guide',
+      path: '/mindfulness'
     },
     {
       id: 2,
       title: 'Stress Management Tips',
       description: 'Practical techniques for managing daily stress',
       icon: FileText,
-      category: 'Article'
+      category: 'Article',
+      path: '/stress-management'
     },
     {
       id: 3,
       title: 'Community Support',
       description: 'Connect with others on your wellness journey',
       icon: MessageSquare,
-      category: 'Community'
+      category: 'Community',
+      path: '/chat'
     }
   ];
+
+  const handleResourceClick = (path: string) => {
+    if (path === '/chat') {
+      navigate(path);
+    } else {
+      // For now, navigate to chat for unimplemented resources
+      navigate('/chat');
+    }
+  };
 
   return (
     <MainLayout pageTitle="Resources">
@@ -42,6 +57,7 @@ const Resources = () => {
             <Card 
               key={resource.id} 
               className="p-4 hover:border-teal/20 transition-colors cursor-pointer"
+              onClick={() => handleResourceClick(resource.path)}
             >
               <div className="flex gap-4">
                 <div className="w-12 h-12 rounded-lg bg-teal/10 flex items-center justify-center">
