@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from 'react';
+
+import React, { useState, useEffect, useRef } from 'react';
 import { Send, Smile, Paperclip } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar } from '@/components/ui/avatar';
 import { Card } from '@/components/ui/card';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import ChatHistory from './ChatHistory';
 import { detectSymptoms, getQuestionsForSymptom, getAffirmationsForSymptom } from '@/services/mentalHealthService';
 import { DetectedSymptom } from '@/types/mentalHealth';
@@ -15,12 +17,22 @@ type Message = {
   timestamp: Date;
 };
 
+const emojis = [
+  '😊', '😃', '😄', '😁', '😆', '😅', '🥰', '😇', 
+  '😉', '😌', '😍', '🤗', '🤔', '🤨', '😐', '😑',
+  '😶', '🙄', '😏', '😣', '😥', '😮', '😯', '😪',
+  '😫', '😴', '😌', '😛', '😜', '😝', '😒', '😓',
+  '😔', '😕', '🙃', '🤑', '😲', '☹️', '😖', '😞',
+  '😤', '😢', '😭', '😧', '😩', '😰', '😱', '🥵'
+];
+
 const ChatInterface = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [currentSymptom, setCurrentSymptom] = useState<DetectedSymptom | null>(null);
   const [questionIndex, setQuestionIndex] = useState(0);
   const [yesCount, setYesCount] = useState(0);
+  const scrollAreaRef = useRef<HTMLDivElement>(null);
   
   useEffect(() => {
     const savedMessages = localStorage.getItem('chatHistory');
@@ -43,6 +55,13 @@ const ChatInterface = () => {
 
   useEffect(() => {
     localStorage.setItem('chatHistory', JSON.stringify(messages));
+    // Scroll to bottom when new messages arrive
+    if (scrollAreaRef.current) {
+      const scrollElement = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]');
+      if (scrollElement) {
+        scrollElement.scrollTop = scrollElement.scrollHeight;
+      }
+    }
   }, [messages]);
 
   const handleSend = () => {
@@ -116,6 +135,10 @@ const ChatInterface = () => {
     setMessages([initialMessage]);
     localStorage.setItem('chatHistory', JSON.stringify([initialMessage]));
   };
+  
+  const addEmoji = (emoji: string) => {
+    setInput(prev => prev + emoji);
+  };
 
   return (
     <Card className="h-[calc(100vh-160px)] flex flex-col bg-white dark:bg-card rounded-lg shadow-sm">
@@ -129,7 +152,7 @@ const ChatInterface = () => {
         </div>
       </div>
 
-      <ScrollArea className="flex-1 p-4">
+      <ScrollArea className="flex-1 p-4" ref={scrollAreaRef}>
         <div className="space-y-4">
           {messages.map((message, index) => (
             <div
@@ -172,9 +195,26 @@ const ChatInterface = () => {
           <Button variant="ghost" size="icon" className="text-gray-500">
             <Paperclip className="h-5 w-5" />
           </Button>
-          <Button variant="ghost" size="icon" className="text-gray-500">
-            <Smile className="h-5 w-5" />
-          </Button>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="ghost" size="icon" className="text-gray-500">
+                <Smile className="h-5 w-5" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-64 p-2">
+              <div className="grid grid-cols-8 gap-1">
+                {emojis.map((emoji, index) => (
+                  <button
+                    key={index}
+                    className="w-7 h-7 flex items-center justify-center hover:bg-gray-100 rounded text-lg"
+                    onClick={() => addEmoji(emoji)}
+                  >
+                    {emoji}
+                  </button>
+                ))}
+              </div>
+            </PopoverContent>
+          </Popover>
           <div className="flex-1 flex items-center gap-2">
             <Input
               value={input}

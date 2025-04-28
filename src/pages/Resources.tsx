@@ -4,6 +4,7 @@ import MainLayout from '../components/layouts/MainLayout';
 import { Card } from '@/components/ui/card';
 import { BookOpen, FileText, MessageSquare } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from '@/hooks/use-toast';
 
 const Resources = () => {
   const navigate = useNavigate();
@@ -31,15 +32,21 @@ const Resources = () => {
       description: 'Connect with others on your wellness journey',
       icon: MessageSquare,
       category: 'Community',
-      path: '/chat'
+      path: '/community'
     }
   ];
 
-  const handleResourceClick = (path: string) => {
-    if (path === '/chat') {
-      navigate(path);
-    } else {
-      // For now, navigate to chat for unimplemented resources
+  const handleResourceClick = (resource: typeof resources[0]) => {
+    // For now, show a toast with the resource information
+    // In a full implementation, these would navigate to actual pages
+    toast({
+      title: resource.title,
+      description: `You selected: ${resource.description}`,
+      duration: 3000,
+    });
+    
+    // Only navigate to chat for the Community option
+    if (resource.category === 'Community') {
       navigate('/chat');
     }
   };
@@ -57,7 +64,7 @@ const Resources = () => {
             <Card 
               key={resource.id} 
               className="p-4 hover:border-teal/20 transition-colors cursor-pointer"
-              onClick={() => handleResourceClick(resource.path)}
+              onClick={() => handleResourceClick(resource)}
             >
               <div className="flex gap-4">
                 <div className="w-12 h-12 rounded-lg bg-teal/10 flex items-center justify-center">
