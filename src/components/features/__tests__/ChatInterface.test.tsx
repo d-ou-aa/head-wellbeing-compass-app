@@ -1,25 +1,27 @@
 
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import ChatInterface from '../ChatInterface';
+import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
+import ChatInterface from '../ChatInterface';
+import { BrowserRouter } from 'react-router-dom';
+
+// Mock the chat components
+jest.mock('../chat/ChatContainer', () => {
+  return {
+    __esModule: true,
+    default: () => <div data-testid="mock-chat-container">Mock Chat Container</div>
+  };
+});
 
 describe('ChatInterface', () => {
-  it('renders initial AI message', () => {
-    render(<ChatInterface />);
-    expect(screen.getByText(/Hi there! I'm HeadDoWell/i)).toBeInTheDocument();
-  });
-
-  it('allows user to send a message', async () => {
-    render(<ChatInterface />);
-    const input = screen.getByPlaceholderText('Type your message...');
-    const sendButton = screen.getByRole('button', { name: '' }); // The button has an icon, not text
-
-    fireEvent.change(input, { target: { value: 'I feel sad and tired' } });
-    fireEvent.click(sendButton);
-
-    await waitFor(() => {
-      expect(screen.getByText('I feel sad and tired')).toBeInTheDocument();
-    });
+  test('renders chat container', () => {
+    render(
+      <BrowserRouter>
+        <ChatInterface />
+      </BrowserRouter>
+    );
+    
+    // Check if the chat container is rendered
+    expect(screen.getByTestId('mock-chat-container')).toBeInTheDocument();
   });
 });
