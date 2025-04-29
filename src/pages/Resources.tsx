@@ -32,22 +32,21 @@ const Resources = () => {
       description: 'Connect with others on your wellness journey',
       icon: MessageSquare,
       category: 'Community',
-      path: '/community'
+      path: '/chat'
     }
   ];
 
   const handleResourceClick = (resource: typeof resources[0]) => {
-    // For now, show a toast with the resource information
-    // In a full implementation, these would navigate to actual pages
-    toast({
-      title: resource.title,
-      description: `You selected: ${resource.description}`,
-      duration: 3000,
-    });
-    
-    // Only navigate to chat for the Community option
+    // For the Community option, navigate to chat
     if (resource.category === 'Community') {
       navigate('/chat');
+    } else {
+      // For other resources (Guide, Article), show a toast notification
+      toast({
+        title: resource.title,
+        description: `You selected: ${resource.description}`,
+        duration: 3000,
+      });
     }
   };
 

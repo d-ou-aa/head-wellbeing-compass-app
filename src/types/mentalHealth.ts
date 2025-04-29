@@ -2,6 +2,7 @@
 export type Symptom = {
   questions: string[];
   affirmations: string[];
+  symptoms: string[];
 };
 
 export type Disorder = {

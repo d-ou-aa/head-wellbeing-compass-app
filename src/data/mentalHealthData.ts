@@ -11,13 +11,13 @@ export const Depression: Disorder = {
       "Do you feel exhausted without doing much?"
     ],
     affirmations: [
-      "Fatigue is one of the most common signs of depression.",
-      "You're not lazy; your mind and body are trying to cope.",
-      "Many people with depression feel tired most of the time.",
-      "Recognizing fatigue is the first step toward recovery."
+      "You're doing your best even when it feels like the world is heavy. Feeling tired doesn't make you weak; it means you've been strong for too long, and now it's time to care for yourself gently.",
+      "It's okay to feel exhausted — mentally, emotionally, or physically. Rest is not a luxury; it's your body and soul asking for healing. Take the time you need, and be proud of every small step forward.",
+      "Acknowledging that you're feeling drained is not a sign of failure — it's a sign of awareness and courage. You are not alone, and with time, compassion, and support, you can feel light and whole again."
     ],
     symptoms: [
-      "tiredness", "exhaustion", "lack of energy", "feeling drained"
+      "tired", "exhaustion", "lack of energy", "feeling drained", "fatigue", "exhausted", 
+      "drained", "weary", "no strength", "sluggish", "no energy"
     ]
   },
   Sadness: {
@@ -29,13 +29,13 @@ export const Depression: Disorder = {
       "Do you find it hard to feel joy lately?"
     ],
     affirmations: [
-      "Persistent sadness can indicate depression.",
-      "It's okay to feel down, and you're not alone.",
-      "Acknowledging sadness is brave and important.",
-      "Sadness isn't weakness—it's a signal you deserve care."
+      "It's perfectly okay to feel sadness. These emotions are a part of being human. You don't need to hide how you feel — your emotions are valid, and expressing them is the first step toward healing.",
+      "Crying and feeling down does not make you weak — it means you care deeply. There is light at the end of this, and with love and patience, your heart will smile again, even if it takes time.",
+      "Losing interest in what you once loved doesn't mean you're broken. It means you're going through something deep. But please remember — your joy is still within you, waiting patiently to return when you're ready."
     ],
     symptoms: [
-      "feeling sad", "feeling blue", "emotional pain", "hopelessness"
+      "feeling sad", "feeling blue", "emotional pain", "hopelessness", "sad", "unhappy", 
+      "depressed", "down", "gloomy", "grief", "misery", "heartache", "melancholy", "downhearted"
     ]
   }
 };
@@ -56,7 +56,8 @@ export const Anxiety: Disorder = {
       "It's okay to need calm—it's a strength to seek peace."
     ],
     symptoms: [
-      "feeling anxious", "nervous energy", "can't relax", "feeling jittery"
+      "feeling anxious", "nervous energy", "can't relax", "feeling jittery", "restless",
+      "agitation", "unease", "fidgeting", "nervousness", "disquiet", "on edge", "anxious"
     ]
   },
   Sweating: {
@@ -74,7 +75,8 @@ export const Anxiety: Disorder = {
       "Understanding these symptoms helps reduce fear of them."
     ],
     symptoms: [
-      "sweaty palms", "excessive sweating", "feeling clammy", "nervous perspiration"
+      "sweaty palms", "excessive sweating", "feeling clammy", "nervous perspiration",
+      "perspiration", "moisture", "clamminess", "dripping", "dampness"
     ]
   }
 };
