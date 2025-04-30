@@ -1,3 +1,4 @@
+
 import React from 'react';
 import MainLayout from '../components/layouts/MainLayout';
 import FeatureCard from '../components/ui/FeatureCard';
@@ -68,7 +69,7 @@ const Index = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
             <FeatureCard
-              title="Chat with Wysa"
+              title="Chat with HeadDoWell"
               description="Talk about your feelings and get support"
               icon={<div className="flex justify-center"><MessageSquare className="w-6 h-6 text-teal" /></div>}
               onClick={() => setActiveFeature('chat')}
