@@ -5,6 +5,15 @@ import '@testing-library/jest-dom';
 import ChatInterface from '../ChatInterface';
 import { BrowserRouter } from 'react-router-dom';
 
+// Add the missing matcher
+declare global {
+  namespace jest {
+    interface Matchers<R> {
+      toBeInTheDocument(): R;
+    }
+  }
+}
+
 // Mock the chat components
 jest.mock('../chat/ChatContainer', () => {
   return {

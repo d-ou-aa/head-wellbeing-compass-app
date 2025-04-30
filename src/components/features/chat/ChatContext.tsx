@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { detectSymptoms, getQuestionsForSymptom, getAffirmationsForSymptom } from '@/services/mentalHealthService';
 import { DetectedSymptom } from '@/types/mentalHealth';
@@ -46,6 +45,17 @@ export const ChatContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
     resetConversation();
   }, []);
 
+  // Save chat history to localStorage
+  useEffect(() => {
+    if (messages.length > 1) { // Skip the initial greeting message
+      localStorage.setItem('chatHistory', JSON.stringify(messages));
+      
+      // Dispatch a custom event to notify other components about the update
+      const event = new Event('chatHistoryUpdated');
+      window.dispatchEvent(event);
+    }
+  }, [messages]);
+
   // Reset the conversation state variables
   const resetConversation = () => {
     setCurrentSymptom(null);
@@ -73,13 +83,6 @@ export const ChatContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
       }, 1000);
     }
   }, [conversationState, detectedSymptoms, confirmedSymptoms]);
-
-  // Save chat history to localStorage
-  useEffect(() => {
-    if (messages.length > 1) { // Skip the initial greeting message
-      localStorage.setItem('chatHistory', JSON.stringify(messages));
-    }
-  }, [messages]);
 
   // Process detected symptoms and ask questions about them
   const handleDetectedSymptoms = () => {

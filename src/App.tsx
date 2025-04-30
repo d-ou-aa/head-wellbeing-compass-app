@@ -14,29 +14,32 @@ import Profile from "./pages/Profile";
 import Crisis from "./pages/Crisis";
 import Settings from "./pages/Settings";
 import ChatHistory from "./pages/ChatHistory";
+import { ThemeProvider } from "./contexts/ThemeContext";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/onboarding" element={<Onboarding />} />
-          <Route path="/" element={<Index />} />
-          <Route path="/chat" element={<Chat />} />
-          <Route path="/chat-history" element={<ChatHistory />} />
-          <Route path="/journal" element={<Journal />} />
-          <Route path="/resources" element={<Resources />} />
-          <Route path="/crisis" element={<Crisis />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/settings" element={<Settings />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
+    <ThemeProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/onboarding" element={<Onboarding />} />
+            <Route path="/" element={<Index />} />
+            <Route path="/chat" element={<Chat />} />
+            <Route path="/chat-history" element={<ChatHistory />} />
+            <Route path="/journal" element={<Journal />} />
+            <Route path="/resources" element={<Resources />} />
+            <Route path="/crisis" element={<Crisis />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/settings" element={<Settings />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </ThemeProvider>
   </QueryClientProvider>
 );
 

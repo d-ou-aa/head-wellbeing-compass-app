@@ -14,8 +14,21 @@ import {
   FileText
 } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
+import { useTheme } from '@/contexts/ThemeContext';
+import { toast } from '@/components/ui/use-toast';
 
 const Settings = () => {
+  const { userPreferences, updatePreference } = useTheme();
+
+  const handleClearData = () => {
+    localStorage.removeItem('chatHistory');
+    toast({
+      title: 'Data cleared',
+      description: 'All your chat history has been deleted.',
+      variant: 'default',
+    });
+  };
+
   return (
     <MainLayout pageTitle="Settings">
       <div className="space-y-6">
@@ -31,7 +44,11 @@ const Settings = () => {
                 </div>
                 <Label htmlFor="daily-reminders">Daily check-in reminders</Label>
               </div>
-              <Switch id="daily-reminders" />
+              <Switch 
+                id="daily-reminders" 
+                checked={userPreferences.dailyReminders}
+                onCheckedChange={(checked) => updatePreference('dailyReminders', checked)}
+              />
             </div>
             
             <div className="flex items-center justify-between">
@@ -41,7 +58,11 @@ const Settings = () => {
                 </div>
                 <Label htmlFor="activity-notifications">Activity suggestions</Label>
               </div>
-              <Switch id="activity-notifications" />
+              <Switch 
+                id="activity-notifications" 
+                checked={userPreferences.activitySuggestions}
+                onCheckedChange={(checked) => updatePreference('activitySuggestions', checked)}
+              />
             </div>
           </div>
         </Card>
@@ -55,7 +76,11 @@ const Settings = () => {
               </div>
               <Label htmlFor="dark-mode">Dark mode</Label>
             </div>
-            <Switch id="dark-mode" />
+            <Switch 
+              id="dark-mode" 
+              checked={userPreferences.darkMode}
+              onCheckedChange={(checked) => updatePreference('darkMode', checked)}
+            />
           </div>
         </Card>
         
@@ -68,7 +93,11 @@ const Settings = () => {
               </div>
               <Label htmlFor="sound-effects">Sound effects</Label>
             </div>
-            <Switch id="sound-effects" />
+            <Switch 
+              id="sound-effects" 
+              checked={userPreferences.soundEffects}
+              onCheckedChange={(checked) => updatePreference('soundEffects', checked)}
+            />
           </div>
         </Card>
         
@@ -82,7 +111,11 @@ const Settings = () => {
                 </div>
                 <Label htmlFor="data-collection">Data collection</Label>
               </div>
-              <Switch id="data-collection" />
+              <Switch 
+                id="data-collection" 
+                checked={userPreferences.dataCollection}
+                onCheckedChange={(checked) => updatePreference('dataCollection', checked)}
+              />
             </div>
             
             <Separator />
@@ -97,7 +130,12 @@ const Settings = () => {
                   <p className="text-xs text-gray-500">Delete all your journal entries and conversations</p>
                 </div>
               </div>
-              <button className="text-sm text-red-500 font-medium">Clear</button>
+              <button 
+                className="text-sm text-red-500 font-medium"
+                onClick={handleClearData}
+              >
+                Clear
+              </button>
             </div>
           </div>
         </Card>
