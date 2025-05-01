@@ -1,5 +1,5 @@
-
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import MainLayout from '../components/layouts/MainLayout';
 import FeatureCard from '../components/ui/FeatureCard';
 import MoodTracker from '../components/features/MoodTracker';
@@ -9,6 +9,7 @@ import SelfCareActivities from '../components/features/SelfCareActivities';
 import { MessageSquare, BarChart2, AlertCircle, Heart } from 'lucide-react';
 
 const Index = () => {
+  const navigate = useNavigate();
   const [activeFeature, setActiveFeature] = React.useState<string | null>(null);
 
   // Helper function to render the active feature
@@ -25,6 +26,23 @@ const Index = () => {
       default:
         return null;
     }
+  };
+
+  const handleFeatureClick = (feature: string) => {
+    // If it's chat, navigate to chat page
+    if (feature === 'chat') {
+      navigate('/chat');
+      return;
+    }
+    
+    // For crisis feature, navigate to crisis page
+    if (feature === 'crisis') {
+      navigate('/crisis');
+      return;
+    }
+    
+    // For other features, just set the active feature
+    setActiveFeature(feature);
   };
 
   return (
@@ -72,28 +90,28 @@ const Index = () => {
               title="Chat with HeadDoWell"
               description="Talk about your feelings and get support"
               icon={<div className="flex justify-center"><MessageSquare className="w-6 h-6 text-teal" /></div>}
-              onClick={() => setActiveFeature('chat')}
+              onClick={() => handleFeatureClick('chat')}
             />
             
             <FeatureCard
               title="Daily Mood Check"
               description="Track how you're feeling today"
               icon={<div className="flex justify-center"><BarChart2 className="w-6 h-6 text-teal" /></div>}
-              onClick={() => setActiveFeature('mood')}
+              onClick={() => handleFeatureClick('mood')}
             />
             
             <FeatureCard
               title="Crisis Support"
               description="Get immediate help when you need it most"
               icon={<div className="flex justify-center"><AlertCircle className="w-6 h-6 text-emergency" /></div>}
-              onClick={() => setActiveFeature('crisis')}
+              onClick={() => handleFeatureClick('crisis')}
             />
             
             <FeatureCard
               title="Self-Care Activities"
               description="Simple exercises for your wellbeing"
               icon={<div className="flex justify-center"><Heart className="w-6 h-6 text-teal" /></div>}
-              onClick={() => setActiveFeature('selfcare')}
+              onClick={() => handleFeatureClick('selfcare')}
             />
           </div>
           
