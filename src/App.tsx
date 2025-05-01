@@ -14,6 +14,7 @@ import Profile from "./pages/Profile";
 import Crisis from "./pages/Crisis";
 import Settings from "./pages/Settings";
 import ChatHistory from "./pages/ChatHistory";
+import Notifications from "./pages/Notifications";
 import { ThemeProvider } from "./contexts/ThemeContext";
 
 const queryClient = new QueryClient();
@@ -35,6 +36,7 @@ const App = () => (
             <Route path="/crisis" element={<Crisis />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/settings" element={<Settings />} />
+            <Route path="/notifications" element={<Notifications />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
