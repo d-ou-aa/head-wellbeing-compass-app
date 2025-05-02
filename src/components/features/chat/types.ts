@@ -5,6 +5,7 @@ export type Message = {
   text: string;
   sender: 'user' | 'ai';
   timestamp: Date;
+  isTyping?: boolean;
 };
 
 export type ChatContextType = {

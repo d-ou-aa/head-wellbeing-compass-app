@@ -42,7 +42,15 @@ const ChatMessages = () => {
                   : 'bg-gray-100 dark:bg-gray-800'
               }`}
             >
-              <p className="text-sm whitespace-pre-line">{message.text}</p>
+              {message.isTyping ? (
+                <div className="flex items-center space-x-1">
+                  <div className="w-2 h-2 rounded-full bg-gray-500 animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                  <div className="w-2 h-2 rounded-full bg-gray-500 animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                  <div className="w-2 h-2 rounded-full bg-gray-500 animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                </div>
+              ) : (
+                <p className="text-sm whitespace-pre-line">{message.text}</p>
+              )}
               <span className="text-xs opacity-70 mt-1 block">
                 {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
               </span>

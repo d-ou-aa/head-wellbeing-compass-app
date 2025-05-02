@@ -19,7 +19,7 @@ export function useConversationLogic() {
   useEffect(() => {
     setMessages([
       { 
-        text: "Hi there! I'm HeadDoWell, your mental wellness companion. How are you feeling today?",
+        text: "Hi there! I'm HeadDoWell, your mental wellness companion. How have you been feeling lately?",
         sender: 'ai',
         timestamp: new Date()
       }
@@ -30,7 +30,9 @@ export function useConversationLogic() {
   // Save chat history to localStorage
   useEffect(() => {
     if (messages.length > 1) { // Skip the initial greeting message
-      localStorage.setItem('chatHistory', JSON.stringify(messages));
+      // Filter out typing indicators before saving
+      const messagesToSave = messages.filter(msg => !msg.isTyping);
+      localStorage.setItem('chatHistory', JSON.stringify(messagesToSave));
       
       // Dispatch a custom event to notify other components about the update
       const event = new Event('chatHistoryUpdated');
