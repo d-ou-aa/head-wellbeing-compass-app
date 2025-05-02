@@ -38,6 +38,21 @@ export function useConversationLogic() {
     }
   }, [messages]);
 
+  // Update currentSymptom when detectedSymptoms change
+  useEffect(() => {
+    if (detectedSymptoms.length > 0) {
+      setCurrentSymptom(detectedSymptoms[0]);
+    } else {
+      setCurrentSymptom(null);
+    }
+  }, [detectedSymptoms]);
+
+  // Reset question state when currentSymptom changes
+  useEffect(() => {
+    setQuestionIndex(0);
+    setYesCount(0);
+  }, [currentSymptom]);
+
   // Reset the conversation state variables
   const resetConversation = () => {
     setCurrentSymptom(null);

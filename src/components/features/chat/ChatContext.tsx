@@ -75,7 +75,8 @@ export const ChatContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
       setDetectedSymptoms,
       setYesCount,
       setConversationState,
-      processNextQuestion
+      processNextQuestion,
+      confirmedSymptoms // Pass confirmedSymptoms here
     );
   }, [
     input,
@@ -87,7 +88,37 @@ export const ChatContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
     setYesCount,
     setConversationState,
     processNextQuestion,
-    handleSendBase
+    handleSendBase,
+    confirmedSymptoms // Include in dependencies
+  ]);
+
+  // Watch for changes in conversation state and act accordingly
+  React.useEffect(() => {
+    if (conversationState === 'detecting') {
+      handleDetectedSymptoms(
+        detectedSymptoms,
+        askedDisorders,
+        setAskedDisorders,
+        setMessages,
+        setConversationState
+      );
+    } else if (conversationState === 'summarizing') {
+      provideSummaryAndRecommendations(
+        confirmedSymptoms,
+        setMessages,
+        setConversationState
+      );
+    }
+  }, [
+    conversationState,
+    detectedSymptoms,
+    askedDisorders,
+    confirmedSymptoms,
+    handleDetectedSymptoms,
+    provideSummaryAndRecommendations,
+    setAskedDisorders,
+    setMessages,
+    setConversationState
   ]);
 
   return (

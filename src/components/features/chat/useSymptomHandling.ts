@@ -1,5 +1,6 @@
 
 import { getQuestionsForSymptom, getAffirmationsForSymptom } from '@/services/mentalHealthService';
+import { getRecommendedTherapies } from '@/services/knowledgeGraphService';
 import { DetectedSymptom } from '@/types/mentalHealth';
 import { Message } from './types';
 
@@ -135,10 +136,38 @@ export function useSymptomHandling() {
     setConversationState: React.Dispatch<React.SetStateAction<'initial' | 'detecting' | 'questioning' | 'summarizing'>>
   ) => {
     if (confirmedSymptoms.length > 0) {
-      // Create summary message
-      const summaryText = `Thank you for sharing. Based on our conversation, I've noticed these symptoms:\n\n${
-        confirmedSymptoms.map(s => `• ${s.name} (related to ${s.disorder})`).join('\n')
-      }\n\nRemember this isn't a diagnosis. If these symptoms are affecting your daily life, I encourage you to speak with a mental health professional.`;
+      // Create summary message with therapy recommendations
+      let summaryText = `Thank you for sharing. Based on our conversation, I've noticed these symptoms:\n\n`;
+      
+      // Group symptoms by disorder
+      const disorderGroups: Record<string, string[]> = {};
+      confirmedSymptoms.forEach(s => {
+        if (!disorderGroups[s.disorder]) {
+          disorderGroups[s.disorder] = [];
+        }
+        disorderGroups[s.disorder].push(s.name);
+      });
+      
+      // List symptoms by disorder
+      Object.entries(disorderGroups).forEach(([disorder, symptoms]) => {
+        summaryText += `**${disorder}**:\n${symptoms.map(s => `• ${s}`).join('\n')}\n\n`;
+      });
+      
+      // Add therapy recommendations
+      summaryText += "**Potentially helpful approaches**:\n";
+      const addedTherapies = new Set<string>();
+      
+      confirmedSymptoms.forEach(s => {
+        const therapies = getRecommendedTherapies(s.disorder);
+        therapies.forEach(therapy => {
+          if (!addedTherapies.has(therapy.name)) {
+            addedTherapies.add(therapy.name);
+            summaryText += `• ${therapy.label}\n`;
+          }
+        });
+      });
+      
+      summaryText += "\nRemember this isn't a diagnosis. If these symptoms are affecting your daily life, I encourage you to speak with a mental health professional.";
       
       const summaryMessage = {
         text: summaryText,

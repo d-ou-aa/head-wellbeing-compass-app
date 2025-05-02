@@ -1,5 +1,6 @@
 
 import { detectSymptoms, getAffirmationsForSymptom } from '@/services/mentalHealthService';
+import { getRecommendedTherapies, generateTherapeuticResponse } from '@/services/knowledgeGraphService';
 import { DetectedSymptom } from '@/types/mentalHealth';
 import { Message } from './types';
 
@@ -14,7 +15,8 @@ export function useMessageHandling() {
     setDetectedSymptoms: React.Dispatch<React.SetStateAction<DetectedSymptom[]>>,
     setYesCount: React.Dispatch<React.SetStateAction<number>>,
     setConversationState: React.Dispatch<React.SetStateAction<'initial' | 'detecting' | 'questioning' | 'summarizing'>>,
-    processNextQuestion: () => void
+    processNextQuestion: () => void,
+    confirmedSymptoms: DetectedSymptom[]
   ) => {
     if (!input.trim()) return;
 
@@ -35,7 +37,7 @@ export function useMessageHandling() {
         // Send an affirmation as reply
         const affirmations = getAffirmationsForSymptom(currentSymptom.disorder, currentSymptom.name);
         if (affirmations.length > 0) {
-          const affirmationIndex = 0; // Use first affirmation for simplicity
+          const affirmationIndex = Math.floor(Math.random() * affirmations.length); 
           const affirmationMessage = {
             text: affirmations[affirmationIndex],
             sender: 'ai' as const,
@@ -61,9 +63,18 @@ export function useMessageHandling() {
         console.log('Detected symptoms:', detectedSyms);
         setDetectedSymptoms(detectedSyms);
         
-        // Acknowledge detected symptoms with a more empathetic response
+        // Use knowledge graph to generate a more personalized and flexible response
+        const symptomNames = detectedSyms.map(s => s.name);
+        const confirmedDisorderNames = confirmedSymptoms.map(s => s.disorder);
+        const therapeuticResponse = generateTherapeuticResponse(
+          symptomNames, 
+          confirmedDisorderNames,
+          'exploring'
+        );
+        
+        // Acknowledge detected symptoms with a more therapeutic response
         const detectionMessage = {
-          text: `I hear that you're going through a difficult time. I'd like to understand better how you're feeling.`,
+          text: therapeuticResponse,
           sender: 'ai' as const,
           timestamp: new Date()
         };
@@ -73,9 +84,9 @@ export function useMessageHandling() {
           setConversationState('detecting');
         }, 800);
       } else {
-        // No symptoms detected, respond with an open-ended question
+        // No symptoms detected, respond with an open-ended therapeutic question
         const aiMessage = {
-          text: "Thank you for sharing. Could you tell me more about what's been on your mind lately? I'm here to listen.",
+          text: generateTherapeuticResponse([], [], 'initial'),
           sender: 'ai' as const,
           timestamp: new Date()
         };
