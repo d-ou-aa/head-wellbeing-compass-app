@@ -1,26 +1,40 @@
 
-import React from 'react';
-import { Send, Paperclip, Mic, MicOff } from 'lucide-react';
+import React, { useState } from 'react';
+import { Send, Paperclip, Mic, MicOff, Loader2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import EmojiPicker from './EmojiPicker';
 import { useChatContext } from './ChatContext';
-import { useVoiceRecording } from '@/hooks/useVoiceRecording';
+import { useVoiceRecognition } from '@/hooks/useVoiceRecognition';
 
 const ChatInput = () => {
   const { input, setInput, handleSend } = useChatContext();
+  const [isProcessing, setIsProcessing] = useState(false);
   
   const handleTranscript = (transcript: string) => {
     setInput(transcript);
+    setIsProcessing(false);
   };
 
-  const { isRecording, startRecording, stopRecording } = useVoiceRecording(handleTranscript);
+  const {
+    isRecording,
+    isProcessing: voiceProcessing,
+    startRecognition,
+    stopRecognition,
+  } = useVoiceRecognition({
+    onTranscript: handleTranscript,
+    onStatusChange: (status) => {
+      setIsProcessing(status === 'processing');
+    },
+    language: 'en-US',
+    continuousRecognition: false,
+  });
 
   const toggleRecording = () => {
     if (isRecording) {
-      stopRecording();
+      stopRecognition();
     } else {
-      startRecording();
+      startRecognition();
     }
   };
 
@@ -36,7 +50,7 @@ const ChatInput = () => {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-            placeholder="Type your message..."
+            placeholder="Type your message or speak..."
             className="flex-1"
           />
           <Button
@@ -45,8 +59,15 @@ const ChatInput = () => {
             variant={isRecording ? "destructive" : "secondary"}
             className={isRecording ? "animate-pulse" : ""}
             title={isRecording ? "Stop recording" : "Start voice input"}
+            disabled={isProcessing || voiceProcessing}
           >
-            {isRecording ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
+            {isProcessing || voiceProcessing ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : isRecording ? (
+              <MicOff className="h-4 w-4" />
+            ) : (
+              <Mic className="h-4 w-4" />
+            )}
           </Button>
           <Button
             onClick={handleSend}
@@ -61,6 +82,11 @@ const ChatInput = () => {
       {isRecording && (
         <div className="text-center mt-2">
           <p className="text-sm text-teal">Listening... Speak now</p>
+        </div>
+      )}
+      {(isProcessing || voiceProcessing) && (
+        <div className="text-center mt-2">
+          <p className="text-sm text-amber-500">Processing your voice...</p>
         </div>
       )}
     </div>

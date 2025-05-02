@@ -1,6 +1,5 @@
 
 import { useState, useEffect } from 'react';
-import { detectSymptoms, getQuestionsForSymptom, getAffirmationsForSymptom } from '@/services/mentalHealthService';
 import { DetectedSymptom } from '@/types/mentalHealth';
 import { Message } from './types';
 import { toast } from '@/components/ui/use-toast';
@@ -49,23 +48,6 @@ export function useConversationLogic() {
     setAskedDisorders([]);
     setConversationState('initial');
   };
-
-  // Handle state transitions based on conversation flow
-  useEffect(() => {
-    if (conversationState === 'detecting' && detectedSymptoms.length > 0) {
-      console.log('Starting symptom detection process');
-      // Short delay to make the conversation feel natural
-      setTimeout(() => {
-        handleDetectedSymptoms();
-      }, 800);
-    } else if (conversationState === 'summarizing' && confirmedSymptoms.length > 0) {
-      console.log('Starting summary process with symptoms:', confirmedSymptoms);
-      // Delay before providing the summary
-      setTimeout(() => {
-        provideSummaryAndRecommendations();
-      }, 1000);
-    }
-  }, [conversationState, detectedSymptoms, confirmedSymptoms]);
 
   // Add emoji to the input field
   const addEmoji = (emoji: string) => {

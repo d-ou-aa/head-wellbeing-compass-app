@@ -116,4 +116,5 @@ export const useChatContext = () => {
   return context;
 };
 
-export { Message } from './types';
+// Use `export type` when 'isolatedModules' is enabled
+export type { Message } from './types';
