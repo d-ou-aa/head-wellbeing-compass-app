@@ -1,8 +1,7 @@
-
 import React from 'react';
 import ChatMessages from './ChatMessages';
 import ChatInput from './ChatInput';
-import { ChatContextProvider } from './ChatContext';
+import { ChatContextProvider } from './context';
 import { Card } from '@/components/ui/card';
 import { 
   Sidebar,
@@ -12,7 +11,7 @@ import {
 } from '@/components/ui/sidebar';
 import ChatHistory from '../../features/ChatHistory';
 import { MessageSquare } from 'lucide-react';
-import { Message } from './ChatContext';
+import { Message } from './types';
 
 interface ChatContainerProps {
   historyMessages?: Message[];

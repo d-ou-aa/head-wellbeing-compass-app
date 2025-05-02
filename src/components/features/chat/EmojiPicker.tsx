@@ -1,9 +1,8 @@
-
 import React from 'react';
 import { Smile } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { useChatContext } from './ChatContext';
+import { useChatContext } from './context';
 
 const emojis = [
   '😊', '😃', '😄', '😁', '😆', '😅', '🥰', '😇', 

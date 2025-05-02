@@ -4,7 +4,7 @@ import { Send, Paperclip, Mic, MicOff, Loader2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import EmojiPicker from './EmojiPicker';
-import { useChatContext } from './ChatContext';
+import { useChatContext } from './context';
 import { useVoiceRecognition } from '@/hooks/useVoiceRecognition';
 
 const ChatInput = () => {

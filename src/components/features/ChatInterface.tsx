@@ -1,8 +1,7 @@
-
 import React, { useState, useEffect } from 'react';
 import ChatContainer from './chat/ChatContainer';
 import { SidebarProvider } from '@/components/ui/sidebar';
-import { Message } from './chat/ChatContext';
+import { Message } from './chat/types';
 
 const ChatInterface = () => {
   const [historyMessages, setHistoryMessages] = useState<Message[]>(

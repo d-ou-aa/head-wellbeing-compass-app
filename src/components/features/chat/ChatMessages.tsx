@@ -1,8 +1,7 @@
-
 import React, { useEffect, useRef } from 'react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar } from '@/components/ui/avatar';
-import { useChatContext } from './ChatContext';
+import { useChatContext } from './context';
 
 const ChatMessages = () => {
   const { messages } = useChatContext();
