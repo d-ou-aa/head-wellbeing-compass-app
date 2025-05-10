@@ -15,23 +15,33 @@ export type NLPAnalysisResult = {
   }>;
   suggestedResponses: string[];
   language: string;
+  source?: 'text' | 'voice';
 };
 
 // Analyze message using Python NLP service
-export const analyzeMessage = async (text: string): Promise<NLPAnalysisResult> => {
+export const analyzeMessage = async (text: string, source: 'text' | 'voice' = 'text'): Promise<NLPAnalysisResult> => {
   try {
-    console.log('Analyzing message:', text);
+    console.log(`Analyzing ${source} message:`, text);
     
     // In a real application, this would call the Python NLP service
-    // For now, we'll simulate the response
+    // For now, we'll simulate the response with enhanced speech recognition
     const mockResponse: NLPAnalysisResult = {
       detectedSymptoms: detectSimulatedSymptoms(text),
       sentiment: determineSentiment(text),
       topics: ['mental health', 'emotions'],
       entities: [],
       suggestedResponses: [],
-      language: 'en'
+      language: 'en',
+      source: source
     };
+    
+    // If voice source, give higher confidence to detected symptoms
+    if (source === 'voice') {
+      mockResponse.detectedSymptoms = mockResponse.detectedSymptoms.map(symptom => ({
+        ...symptom,
+        confidence: Math.min(symptom.confidence + 0.08, 0.98) // Increase confidence but cap at 0.98
+      }));
+    }
     
     return mockResponse;
   } catch (error) {
@@ -51,7 +61,13 @@ export const generateResponse = (analysis: NLPAnalysisResult): { text: string; s
   let responseText = '';
   
   if (analysis.detectedSymptoms.length > 0) {
-    responseText = "I notice you mentioned some feelings that might be worth exploring. Would you like to talk more about that?";
+    const symptoms = analysis.detectedSymptoms.map(s => s.name).join(' and ');
+    
+    if (analysis.source === 'voice') {
+      responseText = `I heard you mention feelings related to ${symptoms}. Would you like to talk more about that?`;
+    } else {
+      responseText = `I notice you mentioned some feelings that might be related to ${symptoms}. Would you like to talk more about that?`;
+    }
   } else if (analysis.sentiment === 'negative') {
     responseText = "It sounds like you're going through a challenging time. Would you like to share more about what's been happening?";
   } else if (analysis.sentiment === 'positive') {

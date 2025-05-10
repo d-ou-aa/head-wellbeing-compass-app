@@ -3,6 +3,7 @@ import { Message } from './types';
 import { toast } from '@/components/ui/use-toast';
 import { analyzeMessage, generateResponse } from '@/services/nlpService';
 import { useState, useCallback } from 'react';
+import { processNLPResults } from '@/services/symptomService';
 
 export function useMessageHandling() {
   const [isProcessing, setIsProcessing] = useState(false);
@@ -43,6 +44,11 @@ export function useMessageHandling() {
 
       // Analyze message using NLP service
       const analysis = await analyzeMessage(trimmedInput);
+      console.log("NLP analysis results:", analysis);
+      
+      // Process the NLP results to extract symptoms
+      const { detectedSymptoms, responseText } = processNLPResults(analysis);
+      console.log("Detected symptoms:", detectedSymptoms);
       
       // Generate and add AI response
       const aiMessage = generateResponse(analysis);

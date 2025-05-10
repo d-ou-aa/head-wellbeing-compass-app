@@ -31,74 +31,24 @@ export const ChatContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const {
     handleDetectedSymptoms,
     askQuestionAboutSymptom,
-    processNextQuestion: processNextQuestionBase,
+    processNextQuestion,
     provideSummaryAndRecommendations
   } = useSymptomHandling();
 
   const { handleSend: handleSendBase } = useMessageHandling();
 
-  // Process next question with all required dependencies
-  const processNextQuestion = React.useCallback(() => {
-    processNextQuestionBase(
-      currentSymptom,
-      questionIndex,
-      yesCount,
-      detectedSymptoms,
-      setQuestionIndex,
-      setConfirmedSymptoms,
-      setDetectedSymptoms,
-      setMessages,
-      setConversationState
-    );
-  }, [
-    currentSymptom,
-    questionIndex,
-    yesCount,
-    detectedSymptoms,
-    setQuestionIndex,
-    setConfirmedSymptoms,
-    setDetectedSymptoms,
-    setMessages,
-    setConversationState,
-    processNextQuestionBase
-  ]);
-
-  // Handle sending a message with all required dependencies
+  // Handle sending a message
   const handleSend = React.useCallback(() => {
-    handleSendBase(
-      input,
-      setInput,
-      setMessages,
-      conversationState,
-      currentSymptom,
-      setDetectedSymptoms,
-      setYesCount,
-      setConversationState,
-      processNextQuestion,
-      confirmedSymptoms
-    );
-  }, [
-    input,
-    setInput,
-    setMessages,
-    conversationState,
-    currentSymptom,
-    setDetectedSymptoms,
-    setYesCount,
-    setConversationState,
-    processNextQuestion,
-    handleSendBase,
-    confirmedSymptoms
-  ]);
+    handleSendBase(input, setInput, setMessages);
+  }, [input, setInput, setMessages, handleSendBase]);
 
   // Watch for changes in conversation state and act accordingly
   React.useEffect(() => {
     if (conversationState === 'detecting') {
       handleDetectedSymptoms(
-        detectedSymptoms,
-        askedDisorders,
-        setAskedDisorders,
+        input,
         setMessages,
+        setDetectedSymptoms,
         setConversationState
       );
     } else if (conversationState === 'summarizing') {
@@ -110,13 +60,12 @@ export const ChatContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
     }
   }, [
     conversationState,
-    detectedSymptoms,
-    askedDisorders,
+    input,
     confirmedSymptoms,
     handleDetectedSymptoms,
     provideSummaryAndRecommendations,
-    setAskedDisorders,
     setMessages,
+    setDetectedSymptoms,
     setConversationState
   ]);
 

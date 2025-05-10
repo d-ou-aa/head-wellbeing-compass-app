@@ -13,7 +13,8 @@ export const processNLPResults = (analysis: NLPAnalysisResult): {
   const detectedSymptoms = analysis.detectedSymptoms.map(symptom => ({
     name: symptom.name,
     confidence: symptom.confidence,
-    description: getSymptomDescription(symptom.name)
+    description: getSymptomDescription(symptom.name),
+    source: analysis.source || 'text'
   }));
   
   // Generate appropriate response based on detected symptoms
@@ -22,10 +23,18 @@ export const processNLPResults = (analysis: NLPAnalysisResult): {
   if (detectedSymptoms.length > 0) {
     // Mention detected symptoms
     if (detectedSymptoms.length === 1) {
-      responseText = `I noticed you mentioned something that might be related to ${detectedSymptoms[0].name}. I'd like to ask you a few questions about it, if that's okay?`;
+      if (analysis.source === 'voice') {
+        responseText = `I heard you mention something that might be related to ${detectedSymptoms[0].name}. I'd like to ask you a few questions about it, if that's okay?`;
+      } else {
+        responseText = `I noticed you mentioned something that might be related to ${detectedSymptoms[0].name}. I'd like to ask you a few questions about it, if that's okay?`;
+      }
     } else {
       const symptomNames = detectedSymptoms.map(s => s.name).join(' and ');
-      responseText = `I noticed you mentioned some feelings that might be related to ${symptomNames}. I'd like to ask you a few questions about these, if that's okay?`;
+      if (analysis.source === 'voice') {
+        responseText = `I heard you mention some feelings that might be related to ${symptomNames}. I'd like to ask you a few questions about these, if that's okay?`;
+      } else {
+        responseText = `I noticed you mentioned some feelings that might be related to ${symptomNames}. I'd like to ask you a few questions about these, if that's okay?`;
+      }
     }
   } else if (analysis.sentiment === 'negative') {
     responseText = "It sounds like you're going through a difficult time. Would you like to talk more about what's been happening?";

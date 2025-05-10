@@ -3,6 +3,7 @@ export type DetectedSymptom = {
   name: string;
   confidence: number;
   description: string;
+  source?: 'text' | 'voice';
 };
 
 export type TherapyRecommendation = {
@@ -21,4 +22,18 @@ export type Disorder = {
   description: string;
   symptoms: string[];
   commonTreatments: string[];
+};
+
+// Voice interaction related types
+export type VoiceDetectedIntent = {
+  name: string; // e.g., 'get_help', 'express_feeling', 'ask_question'
+  confidence: number;
+  entities?: Record<string, string>;
+};
+
+export type VoiceInteractionContext = {
+  lastIntent?: VoiceDetectedIntent;
+  sessionDuration: number;
+  interactionCount: number;
+  detectedMood?: 'positive' | 'negative' | 'neutral';
 };

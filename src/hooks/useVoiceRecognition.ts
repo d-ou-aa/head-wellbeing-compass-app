@@ -20,6 +20,7 @@ export const useVoiceRecognition = ({
   const [status, setStatus] = useState<VoiceRecognitionStatus>('inactive');
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const [isSupported, setIsSupported] = useState(true);
+  const transcriptRef = useRef<string>('');
   
   // Update external status handler
   useEffect(() => {
@@ -47,10 +48,12 @@ export const useVoiceRecognition = ({
     recognitionInstance.continuous = continuousRecognition;
     recognitionInstance.interimResults = true;
     recognitionInstance.lang = language;
+    recognitionInstance.maxAlternatives = 3; // Get multiple recognition alternatives
     
     recognitionInstance.onstart = () => {
       console.log('Voice recognition started');
       setStatus('listening');
+      transcriptRef.current = ''; // Reset transcript on start
     };
     
     recognitionInstance.onresult = (event) => {
@@ -61,9 +64,17 @@ export const useVoiceRecognition = ({
       
       console.log('Transcript:', transcript);
       
+      // Store interim results
+      transcriptRef.current = transcript;
+      
       if (event.results[0].isFinal) {
         setStatus('processing');
-        onTranscript(transcript);
+        
+        // Process transcript like Whisper would - correct common misrecognitions
+        const processedTranscript = processTranscript(transcript);
+        console.log('Processed transcript:', processedTranscript);
+        
+        onTranscript(processedTranscript);
         
         // If not continuous, automatically stop after final result
         if (!continuousRecognition) {
@@ -74,16 +85,35 @@ export const useVoiceRecognition = ({
     
     recognitionInstance.onerror = (event) => {
       console.error('Speech recognition error', event.error);
-      toast({
-        title: 'Voice Recognition Error',
-        description: `Error: ${event.error}. Please try again.`,
-        variant: 'destructive',
-      });
+      
+      // Handle the "no-speech" error more gracefully
+      if (event.error === 'no-speech') {
+        toast({
+          title: 'No speech detected',
+          description: 'Please speak more clearly or try again.',
+          duration: 3000,
+        });
+      } else {
+        toast({
+          title: 'Voice Recognition Error',
+          description: `Error: ${event.error}. Please try again.`,
+          variant: 'destructive',
+        });
+      }
+      
       setStatus('inactive');
     };
     
     recognitionInstance.onend = () => {
       console.log('Voice recognition ended');
+      
+      // If we have a transcript but didn't process it as final yet, process it now
+      if (transcriptRef.current && status === 'listening') {
+        setStatus('processing');
+        const processedTranscript = processTranscript(transcriptRef.current);
+        onTranscript(processedTranscript);
+      }
+      
       setStatus('inactive');
     };
     
@@ -99,6 +129,25 @@ export const useVoiceRecognition = ({
       }
     };
   }, [language, continuousRecognition, onTranscript]);
+  
+  // Process transcript similar to how Whisper would
+  const processTranscript = (text: string): string => {
+    // Capitalize first letter of sentences
+    let processed = text.replace(/(^\s*\w|[.!?]\s*\w)/g, match => match.toUpperCase());
+    
+    // Fix common speech recognition issues
+    processed = processed.replace(/i'm/gi, "I'm");
+    processed = processed.replace(/i'll/gi, "I'll");
+    processed = processed.replace(/i've/gi, "I've");
+    processed = processed.replace(/i'd/gi, "I'd");
+    
+    // Add period at end if missing
+    if (!/[.!?]$/.test(processed)) {
+      processed += '.';
+    }
+    
+    return processed;
+  };
   
   const startRecognition = useCallback(() => {
     if (!isSupported) {
@@ -155,3 +204,4 @@ export const useVoiceRecognition = ({
     stopRecognition,
   };
 };
+
