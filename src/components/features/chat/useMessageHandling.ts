@@ -42,9 +42,13 @@ export function useMessageHandling() {
       setMessages(prev => addTypingIndicator(prev));
       setInput('');
 
+      // Detect if this is likely from voice input (capitalized first letter, ends with punctuation)
+      const isLikelyVoiceInput = /^[A-Z].*[.!?]$/.test(trimmedInput);
+      const source = isLikelyVoiceInput ? 'voice' : 'text';
+
       // Analyze message using NLP service
-      const analysis = await analyzeMessage(trimmedInput);
-      console.log("NLP analysis results:", analysis);
+      const analysis = await analyzeMessage(trimmedInput, source);
+      console.log(`NLP analysis results (${source}):`, analysis);
       
       // Process the NLP results to extract symptoms
       const { detectedSymptoms, responseText } = processNLPResults(analysis);

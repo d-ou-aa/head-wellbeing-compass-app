@@ -1,15 +1,24 @@
 
 import React, { useState, useEffect } from 'react';
-import { Send, Paperclip, Mic, MicOff, Loader2 } from 'lucide-react';
+import { Send, Paperclip, Mic, MicOff, Loader2, VolumeX, Volume2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { Toggle } from '@/components/ui/toggle';
 import EmojiPicker from './EmojiPicker';
 import { useChatContext } from './context';
-import { useVoiceRecognition } from '@/hooks/useVoiceRecognition';
+import { useVoiceRecording } from '@/hooks/useVoiceRecording';
 import { toast } from '@/components/ui/use-toast';
 
 const ChatInput = () => {
-  const { input, setInput, handleSend } = useChatContext();
+  const { 
+    input, 
+    setInput, 
+    handleSend, 
+    voiceEnabled, 
+    setVoiceEnabled,
+    isSpeechSupported
+  } = useChatContext();
+  
   const [isProcessing, setIsProcessing] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   
@@ -38,28 +47,16 @@ const ChatInput = () => {
     }
   };
 
-  const {
-    isRecording,
-    isProcessing: voiceProcessing,
-    startRecognition,
-    stopRecognition,
-  } = useVoiceRecognition({
-    onTranscript: handleTranscript,
-    onStatusChange: (status) => {
-      setIsProcessing(status === 'processing');
-    },
-    language: 'en-US',
-    continuousRecognition: false,
-  });
+  const { isRecording, startRecording, stopRecording, isProcessing: voiceProcessing } = useVoiceRecording(handleTranscript);
 
   const toggleRecording = () => {
     if (isRecording) {
-      stopRecognition();
+      stopRecording();
     } else {
       // Request audio permission and start recording
       navigator.mediaDevices.getUserMedia({ audio: true })
         .then(() => {
-          startRecognition();
+          startRecording();
           toast({
             title: "Voice recognition active",
             description: "Speak clearly and I'll listen to what you say.",
@@ -78,8 +75,39 @@ const ChatInput = () => {
     }
   };
 
+  // Toggle voice response feature
+  const handleVoiceToggle = () => {
+    if (setVoiceEnabled) {
+      setVoiceEnabled(prev => !prev);
+      
+      toast({
+        title: !voiceEnabled ? "Voice responses enabled" : "Voice responses disabled",
+        description: !voiceEnabled 
+          ? "AI will now speak its responses aloud." 
+          : "AI will no longer speak responses.",
+        duration: 2000,
+      });
+    }
+  };
+
   return (
     <div className="border-t border-gray-200 dark:border-gray-700 p-4">
+      <div className="flex items-center gap-2 mb-2">
+        <Toggle 
+          pressed={voiceEnabled} 
+          onPressedChange={handleVoiceToggle}
+          disabled={!isSpeechSupported}
+          title={isSpeechSupported 
+            ? "Toggle voice responses" 
+            : "Voice synthesis not supported in this browser"
+          }
+          className={!isSpeechSupported ? "opacity-50 cursor-not-allowed" : ""}
+        >
+          {voiceEnabled ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
+          {isMobile ? '' : (voiceEnabled ? ' Voice on' : ' Voice off')}
+        </Toggle>
+      </div>
+      
       <div className="flex items-center gap-2">
         {!isMobile && (
           <Button variant="ghost" size="icon" className="text-gray-500">
@@ -143,8 +171,8 @@ const ChatInput = () => {
         </div>
       )}
       {isMobile && (
-        <div className="flex justify-center mt-3 text-xs text-gray-500">
-          <p>Tap the mic button to speak with HeadDoWell</p>
+        <div className="flex justify-center mt-3 text-xs text-gray-500 gap-x-1">
+          <p>Use the {voiceEnabled ? "volume button to toggle AI voice" : "mic button to speak with HeadDoWell"}</p>
         </div>
       )}
     </div>

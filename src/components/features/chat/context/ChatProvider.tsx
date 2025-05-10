@@ -1,9 +1,10 @@
 
-import React from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { ChatContext } from './ChatContext';
 import { useConversationLogic } from '../useConversationLogic';
 import { useSymptomHandling } from '../useSymptomHandling';
 import { useMessageHandling } from '../useMessageHandling';
+import { useVoiceSynthesis } from '@/hooks/useVoiceSynthesis';
 import { ChatContextType } from '../types';
 
 export const ChatContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -36,14 +37,55 @@ export const ChatContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
   } = useSymptomHandling();
 
   const { handleSend: handleSendBase } = useMessageHandling();
+  
+  // Voice synthesis
+  const [voiceEnabled, setVoiceEnabled] = useState(false);
+  
+  const { 
+    speak, 
+    stopSpeaking, 
+    isSpeaking, 
+    isSupported: isSpeechSupported 
+  } = useVoiceSynthesis({
+    onSpeakEnd: () => {
+      console.log("Finished speaking");
+    },
+    rate: 1.0,
+    pitch: 1.0
+  });
+
+  // Handle new AI messages for speech
+  useEffect(() => {
+    // Find the latest AI message
+    const latestAiMessage = [...messages]
+      .reverse()
+      .find(msg => msg.sender === 'ai' && !msg.isTyping);
+    
+    // If voice is enabled and we have a new AI message, speak it
+    if (
+      voiceEnabled && 
+      latestAiMessage && 
+      !latestAiMessage.isTyping && 
+      !isSpeaking
+    ) {
+      // We use a small timeout to avoid issues with state updates
+      setTimeout(() => {
+        speak(latestAiMessage.text);
+      }, 100);
+    }
+  }, [messages, voiceEnabled, speak, isSpeaking]);
 
   // Handle sending a message
-  const handleSend = React.useCallback(() => {
+  const handleSend = useCallback(() => {
+    // If voice synthesis is active, stop it
+    if (isSpeaking) {
+      stopSpeaking();
+    }
     handleSendBase(input, setInput, setMessages);
-  }, [input, setInput, setMessages, handleSendBase]);
+  }, [input, setInput, setMessages, handleSendBase, isSpeaking, stopSpeaking]);
 
   // Watch for changes in conversation state and act accordingly
-  React.useEffect(() => {
+  useEffect(() => {
     if (conversationState === 'detecting') {
       handleDetectedSymptoms(
         input,
@@ -79,7 +121,12 @@ export const ChatContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
         handleSend,
         addEmoji,
         currentSymptom,
-        conversationState
+        conversationState,
+        voiceEnabled,
+        setVoiceEnabled,
+        isSpeaking,
+        stopSpeaking,
+        isSpeechSupported
       }}
     >
       {children}

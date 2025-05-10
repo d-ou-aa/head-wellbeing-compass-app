@@ -5,6 +5,7 @@ import { toast } from '@/components/ui/use-toast';
 export const useVoiceRecording = (onTranscript: (transcript: string) => void) => {
   const [isRecording, setIsRecording] = useState(false);
   const [recognition, setRecognition] = useState<SpeechRecognition | null>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   useEffect(() => {
     // Check if browser supports the Web Speech API
@@ -21,13 +22,17 @@ export const useVoiceRecording = (onTranscript: (transcript: string) => void) =>
     recognitionInstance.lang = 'en-US';
 
     recognitionInstance.onresult = (event) => {
+      setIsProcessing(true);
       const transcript = Array.from(event.results)
         .map(result => result[0])
         .map(result => result.transcript)
         .join('');
 
       if (event.results[0].isFinal) {
-        onTranscript(transcript);
+        // Process transcript like Whisper would - correct common misrecognitions
+        const processedTranscript = processTranscript(transcript);
+        onTranscript(processedTranscript);
+        setTimeout(() => setIsProcessing(false), 500);
       }
     };
 
@@ -39,6 +44,7 @@ export const useVoiceRecording = (onTranscript: (transcript: string) => void) =>
         variant: 'destructive',
       });
       setIsRecording(false);
+      setIsProcessing(false);
     };
 
     recognitionInstance.onend = () => {
@@ -54,11 +60,30 @@ export const useVoiceRecording = (onTranscript: (transcript: string) => void) =>
     };
   }, [onTranscript]);
 
+  // Process transcript similar to how Whisper would
+  const processTranscript = (text: string): string => {
+    // Capitalize first letter of sentences
+    let processed = text.replace(/(^\s*\w|[.!?]\s*\w)/g, match => match.toUpperCase());
+    
+    // Fix common speech recognition issues
+    processed = processed.replace(/i'm/gi, "I'm");
+    processed = processed.replace(/i'll/gi, "I'll");
+    processed = processed.replace(/i've/gi, "I've");
+    processed = processed.replace(/i'd/gi, "I'd");
+    
+    // Add period at end if missing
+    if (!/[.!?]$/.test(processed)) {
+      processed += '.';
+    }
+    
+    return processed;
+  };
+
   const startRecording = useCallback(() => {
     if (!recognition) {
       toast({
         title: 'Voice Recognition Not Available',
-        description: 'Your browser does not support voice recognition.',
+        description: 'Your browser does not support voice recognition. Please use text input instead.',
         variant: 'destructive',
       });
       return;
@@ -84,5 +109,5 @@ export const useVoiceRecording = (onTranscript: (transcript: string) => void) =>
     }
   }, [recognition, isRecording]);
 
-  return { isRecording, startRecording, stopRecording };
+  return { isRecording, startRecording, stopRecording, isProcessing };
 };

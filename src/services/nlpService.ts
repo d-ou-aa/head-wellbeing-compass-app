@@ -39,7 +39,7 @@ export const analyzeMessage = async (text: string, source: 'text' | 'voice' = 't
     if (source === 'voice') {
       mockResponse.detectedSymptoms = mockResponse.detectedSymptoms.map(symptom => ({
         ...symptom,
-        confidence: Math.min(symptom.confidence + 0.08, 0.98) // Increase confidence but cap at 0.98
+        confidence: Math.min(symptom.confidence + 0.12, 0.98) // Increase confidence for voice inputs
       }));
     }
     
@@ -83,48 +83,119 @@ export const generateResponse = (analysis: NLPAnalysisResult): { text: string; s
   };
 };
 
-// Helper function to detect symptoms from text (simplified simulation)
+// Helper function to detect symptoms from text (enhanced for better detection)
 function detectSimulatedSymptoms(text: string) {
   const symptoms = [];
   const lowerText = text.toLowerCase();
   
-  if (lowerText.includes('anxious') || lowerText.includes('worry') || lowerText.includes('nervous')) {
-    symptoms.push({ name: 'anxiety', confidence: 0.85 });
-  }
+  // Enhanced symptom detection patterns
+  const patterns = [
+    {
+      name: 'anxiety',
+      keywords: ['anxious', 'anxiety', 'worry', 'worried', 'nervous', 'panic', 'fear', 'afraid'],
+      confidence: 0.85
+    },
+    {
+      name: 'depression',
+      keywords: ['sad', 'depress', 'unhappy', 'hopeless', 'empty', 'meaningless', 'unmotivated'],
+      confidence: 0.82
+    },
+    {
+      name: 'stress',
+      keywords: ['stress', 'overwhelm', 'pressure', 'burden', 'exhausted', 'burnout', 'tired'],
+      confidence: 0.88
+    },
+    {
+      name: 'insomnia',
+      keywords: ['sleep', 'insomnia', 'awake', 'cannot sleep', "can't sleep", 'restless', 'tired'],
+      confidence: 0.75
+    },
+    {
+      name: 'ptsd',
+      keywords: ['trauma', 'flashback', 'nightmare', 'ptsd', 'traumatic', 'event', 'trigger'],
+      confidence: 0.90
+    }
+  ];
   
-  if (lowerText.includes('sad') || lowerText.includes('depress') || lowerText.includes('unhappy')) {
-    symptoms.push({ name: 'depression', confidence: 0.82 });
-  }
-  
-  if (lowerText.includes('stress') || lowerText.includes('overwhelm') || lowerText.includes('pressure')) {
-    symptoms.push({ name: 'stress', confidence: 0.88 });
-  }
-  
-  if (lowerText.includes('sleep') || lowerText.includes('insomnia') || lowerText.includes('awake')) {
-    symptoms.push({ name: 'insomnia', confidence: 0.75 });
-  }
+  patterns.forEach(pattern => {
+    for (const keyword of pattern.keywords) {
+      if (lowerText.includes(keyword)) {
+        symptoms.push({ 
+          name: pattern.name, 
+          confidence: pattern.confidence 
+        });
+        break; // Only add each symptom once
+      }
+    }
+  });
   
   return symptoms;
 }
 
-// Helper function to determine sentiment (simplified)
+// Enhanced sentiment analysis function
 function determineSentiment(text: string): 'positive' | 'negative' | 'neutral' {
   const lowerText = text.toLowerCase();
-  const positiveWords = ['happy', 'good', 'great', 'better', 'well', 'joy'];
-  const negativeWords = ['sad', 'bad', 'awful', 'terrible', 'worried', 'anxious', 'depressed'];
   
+  const positiveWords = [
+    'happy', 'good', 'great', 'better', 'well', 'joy', 'excited', 
+    'wonderful', 'fantastic', 'pleased', 'delighted', 'content', 'satisfied',
+    'enjoyable', 'fun', 'enthusiastic', 'optimistic', 'proud'
+  ];
+  
+  const negativeWords = [
+    'sad', 'bad', 'awful', 'terrible', 'worried', 'anxious', 'depressed',
+    'upset', 'miserable', 'unhappy', 'disappointed', 'frustrated', 'angry',
+    'hurt', 'broken', 'lost', 'alone', 'hopeless', 'fear', 'scared',
+    'stress', 'stressed', 'overwhelmed', 'exhausted', 'tired'
+  ];
+  
+  // Count positive and negative word matches with weighting
   let positiveScore = 0;
   let negativeScore = 0;
   
   positiveWords.forEach(word => {
-    if (lowerText.includes(word)) positiveScore++;
+    if (lowerText.includes(word)) positiveScore += 1;
+    // Check for intensifiers
+    if (lowerText.includes(`very ${word}`) || lowerText.includes(`really ${word}`)) {
+      positiveScore += 0.5;
+    }
   });
   
   negativeWords.forEach(word => {
-    if (lowerText.includes(word)) negativeScore++;
+    if (lowerText.includes(word)) negativeScore += 1;
+    // Check for intensifiers
+    if (lowerText.includes(`very ${word}`) || lowerText.includes(`really ${word}`)) {
+      negativeScore += 0.5;
+    }
   });
   
-  if (positiveScore > negativeScore) return 'positive';
-  if (negativeScore > positiveScore) return 'negative';
+  // Check for negations that flip sentiment
+  const negations = ['not', "don't", "doesn't", "didn't", "isn't", "aren't", "wasn't", "weren't"];
+  negations.forEach(negation => {
+    // Find all occurrences of negation
+    let startPos = 0;
+    while ((startPos = lowerText.indexOf(negation, startPos)) !== -1) {
+      // Check if a positive word follows the negation within 3 words
+      const followingText = lowerText.slice(startPos + negation.length, startPos + negation.length + 30);
+      const followingWords = followingText.split(/\s+/).slice(0, 3);
+      
+      followingWords.forEach(word => {
+        if (positiveWords.includes(word.replace(/[^a-z]/g, ''))) {
+          positiveScore -= 1;
+          negativeScore += 0.5;
+        }
+        if (negativeWords.includes(word.replace(/[^a-z]/g, ''))) {
+          negativeScore -= 1;
+          positiveScore += 0.5;
+        }
+      });
+      
+      startPos += negation.length;
+    }
+  });
+  
+  // Determine sentiment based on scores
+  if (positiveScore > negativeScore + 0.5) return 'positive';
+  if (negativeScore > positiveScore + 0.5) return 'negative';
   return 'neutral';
 }

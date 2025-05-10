@@ -17,4 +17,9 @@ export type ChatContextType = {
   addEmoji: (emoji: string) => void;
   currentSymptom: DetectedSymptom | null;
   conversationState: 'initial' | 'detecting' | 'questioning' | 'summarizing';
+  voiceEnabled?: boolean;
+  setVoiceEnabled?: React.Dispatch<React.SetStateAction<boolean>>;
+  isSpeaking?: boolean;
+  stopSpeaking?: () => void;
+  isSpeechSupported?: boolean;
 };

@@ -37,9 +37,17 @@ export const processNLPResults = (analysis: NLPAnalysisResult): {
       }
     }
   } else if (analysis.sentiment === 'negative') {
-    responseText = "It sounds like you're going through a difficult time. Would you like to talk more about what's been happening?";
+    if (analysis.source === 'voice') {
+      responseText = "It sounds like you might be going through a difficult time. Would you like to talk more about what's been happening?";
+    } else {
+      responseText = "It sounds like you're going through a difficult time. Would you like to talk more about what's been happening?";
+    }
   } else {
-    responseText = "Thank you for sharing. To help me understand better, could you tell me more about what you've been experiencing recently?";
+    if (analysis.source === 'voice') {
+      responseText = "Thank you for sharing. To help me understand better, could you tell me more about how you've been feeling recently?";
+    } else {
+      responseText = "Thank you for sharing. To help me understand better, could you tell me more about what you've been experiencing recently?";
+    }
   }
   
   return {
