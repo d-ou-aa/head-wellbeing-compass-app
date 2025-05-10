@@ -1,5 +1,5 @@
 
-import { createContext, useContext } from 'react';
+import React, { createContext, useContext } from 'react';
 import { ChatContextType } from '../types';
 
 export const ChatContext = createContext<ChatContextType | undefined>(undefined);
