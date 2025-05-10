@@ -1,73 +1,93 @@
-# Welcome to your Lovable project
+# HeadDoWell - Mental Wellness Companion
 
-## Project info
+HeadDoWell is an intelligent mental wellness companion that leverages advanced Natural Language Processing (NLP) to provide empathetic conversations and mental health support. The application combines modern web technologies with sophisticated AI capabilities to create a safe, supportive space for users to express their feelings and receive guidance.
 
-**URL**: https://lovable.dev/projects/3c2bc9f6-d4a3-4fdb-8bbc-3a8283ede1ed
+## 🌟 Key Features
 
-## How can I edit this code?
+- **AI-Powered Chat Interface**: Intelligent conversational agent that understands and responds to users' emotional states
+- **Sentiment Analysis**: Real-time analysis of user messages to detect emotional tone and intensity
+- **Symptom Detection**: Advanced NLP system to identify potential mental health symptoms and concerns
+- **Personalized Responses**: Context-aware responses that adapt to the user's emotional state and needs
+- **Voice Recognition**: Support for voice input to make the interaction more natural and accessible
+- **Chat History**: Secure storage and review of past conversations for tracking progress
+- **Crisis Resources**: Quick access to emergency resources and professional help
 
-There are several ways of editing your application.
+## 🛠️ Technology Stack
 
-**Use Lovable**
+### Frontend
+- React with TypeScript for robust type safety
+- Vite for fast development and building
+- Radix UI components for accessible and customizable UI elements
+- TailwindCSS for modern and responsive styling
+- React Query for efficient data fetching and state management
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/3c2bc9f6-d4a3-4fdb-8bbc-3a8283ede1ed) and start prompting.
+### Backend
+- FastAPI for high-performance API endpoints
+- Advanced NLP processing using:
+  - NLTK for natural language processing
+  - Spacy for advanced text analysis
+  - Sentence Transformers for semantic understanding
+  - Scikit-learn for machine learning capabilities
 
-Changes made via Lovable will be committed automatically to this repo.
+### Additional Features
+- Supabase integration for secure data storage
+- Voice recognition capabilities
+- Emoji support for expressive communication
+- Fuzzy matching for improved text understanding
 
-**Use your preferred IDE**
+## 🚀 Getting Started
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### Prerequisites
+- Node.js (Latest LTS version)
+- Python 3.8+
+- pip (Python package manager)
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+### Installation
 
-Follow these steps:
+1. Clone the repository:
+```bash
+git clone [repository-url]
+cd head
+```
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+2. Install frontend dependencies:
+```bash
+npm install
+```
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+3. Install backend dependencies:
+```bash
+cd public
+pip install -r requirements.txt
+```
 
-# Step 3: Install the necessary dependencies.
-npm i
+### Running the Application
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+1. Start the backend server:
+```bash
+cd public
+uvicorn api:app --reload
+```
+
+2. Start the frontend development server:
+```bash
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+The application will be available at `http://localhost:5173`
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## 🤝 Contributing
 
-**Use GitHub Codespaces**
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## 📝 License
 
-## What technologies are used for this project?
+This project is licensed under the MIT License - see the LICENSE file for details.
 
-This project is built with:
+## 🌐 Support
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+For support, please open an issue in the GitHub repository or contact the maintainers.
 
-## How can I deploy this project?
+---
 
-Simply open [Lovable](https://lovable.dev/projects/3c2bc9f6-d4a3-4fdb-8bbc-3a8283ede1ed) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+Built with ❤️ for mental wellness
