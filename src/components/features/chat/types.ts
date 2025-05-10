@@ -1,12 +1,10 @@
 
-import { DetectedSymptom } from '@/types/mentalHealth';
-
-export type Message = {
+export interface Message {
   text: string;
   sender: 'user' | 'ai';
   timestamp: Date;
   isTyping?: boolean;
-};
+}
 
 export type ChatContextType = {
   messages: Message[];
@@ -14,12 +12,12 @@ export type ChatContextType = {
   input: string;
   setInput: React.Dispatch<React.SetStateAction<string>>;
   handleSend: () => void;
-  addEmoji: (emoji: string) => void;
-  currentSymptom: DetectedSymptom | null;
+  addEmoji?: (emoji: string) => void;
+  currentSymptom: any | null;
   conversationState: 'initial' | 'detecting' | 'questioning' | 'summarizing';
-  voiceEnabled?: boolean;
-  setVoiceEnabled?: React.Dispatch<React.SetStateAction<boolean>>;
-  isSpeaking?: boolean;
-  stopSpeaking?: () => void;
-  isSpeechSupported?: boolean;
+  voiceEnabled: boolean;
+  setVoiceEnabled: React.Dispatch<React.SetStateAction<boolean>>;
+  isSpeaking: boolean;
+  stopSpeaking: () => void;
+  isSpeechSupported: boolean;
 };

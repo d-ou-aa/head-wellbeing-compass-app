@@ -14,18 +14,22 @@ export function useConversationLogic() {
   const [yesCount, setYesCount] = useState(0);
   const [askedDisorders, setAskedDisorders] = useState<string[]>([]);
   const [conversationState, setConversationState] = useState<'initial' | 'detecting' | 'questioning' | 'summarizing'>('initial');
+  const [hasShownWelcomeMessage, setHasShownWelcomeMessage] = useState(false);
 
   // Initialize the chat with a welcome message
   useEffect(() => {
-    setMessages([
-      { 
-        text: "Hi there! I'm HeadDoWell, your mental wellness companion. How have you been feeling lately?",
-        sender: 'ai',
-        timestamp: new Date()
-      }
-    ]);
-    resetConversation();
-  }, []);
+    if (!hasShownWelcomeMessage) {
+      setMessages([
+        { 
+          text: "Hi there! I'm HeadDoWell, your mental wellness companion. How have you been feeling lately? You can type or use the microphone button to talk to me.",
+          sender: 'ai',
+          timestamp: new Date()
+        }
+      ]);
+      setHasShownWelcomeMessage(true);
+      resetConversation();
+    }
+  }, [hasShownWelcomeMessage]);
 
   // Save chat history to localStorage
   useEffect(() => {

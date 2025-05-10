@@ -38,8 +38,8 @@ export const ChatContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
   const { handleSend: handleSendBase } = useMessageHandling();
   
-  // Voice synthesis
-  const [voiceEnabled, setVoiceEnabled] = useState(false);
+  // Voice synthesis - default to enabled
+  const [voiceEnabled, setVoiceEnabled] = useState(true);
   
   const { 
     speak, 

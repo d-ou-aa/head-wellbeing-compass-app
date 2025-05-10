@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Toggle } from '@/components/ui/toggle';
 import EmojiPicker from './EmojiPicker';
 import { useChatContext } from './context';
-import { useVoiceRecording } from '@/hooks/useVoiceRecording';
+import { useVoiceRecognition } from '@/hooks/useVoiceRecognition';
 import { toast } from '@/components/ui/use-toast';
 
 const ChatInput = () => {
@@ -36,27 +36,47 @@ const ChatInput = () => {
     };
   }, []);
   
+  // Handle voice recognition transcript
   const handleTranscript = (transcript: string) => {
     console.log("Voice transcript received:", transcript);
     setInput(transcript);
-    setIsProcessing(false);
     
     // Auto-send if we have a complete sentence ending with punctuation
     if (/[.!?]$/.test(transcript.trim())) {
-      setTimeout(() => handleSend(), 300);
+      setTimeout(() => {
+        handleSend();
+        setIsProcessing(false);
+      }, 300);
+    } else {
+      setIsProcessing(false);
     }
   };
 
-  const { isRecording, startRecording, stopRecording, isProcessing: voiceProcessing } = useVoiceRecording(handleTranscript);
+  // Use the enhanced voice recognition hook
+  const { 
+    isRecording, 
+    isProcessing: voiceProcessing, 
+    startRecognition, 
+    stopRecognition, 
+    isSupported 
+  } = useVoiceRecognition({
+    onTranscript: handleTranscript,
+    onStatusChange: (status) => {
+      if (status === 'processing') {
+        setIsProcessing(true);
+      }
+    },
+    language: 'en-US'
+  });
 
   const toggleRecording = () => {
     if (isRecording) {
-      stopRecording();
+      stopRecognition();
     } else {
       // Request audio permission and start recording
       navigator.mediaDevices.getUserMedia({ audio: true })
         .then(() => {
-          startRecording();
+          startRecognition();
           toast({
             title: "Voice recognition active",
             description: "Speak clearly and I'll listen to what you say.",
